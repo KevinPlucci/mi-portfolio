@@ -1,12 +1,23 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss'],
 })
-export class App {
-  protected readonly title = signal('mi-portfolio');
+export class AppComponent {
+  private router = inject(Router);
+  new: any;
+  year: any;
+  isActive(path: string) {
+    return this.router.isActive(path, {
+      paths: 'exact',
+      queryParams: 'ignored',
+      fragment: 'ignored',
+      matrixParams: 'ignored',
+    });
+  }
 }
