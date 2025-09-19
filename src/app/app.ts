@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet, RouterLink } from '@angular/router';
+import { Component } from '@angular/core';
+import { RouterOutlet, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,15 +9,5 @@ import { Router, RouterOutlet, RouterLink } from '@angular/router';
   styleUrls: ['./app.scss'],
 })
 export class AppComponent {
-  private router = inject(Router);
-  new: any;
-  year: any;
-  isActive(path: string) {
-    return this.router.isActive(path, {
-      paths: 'exact',
-      queryParams: 'ignored',
-      fragment: 'ignored',
-      matrixParams: 'ignored',
-    });
-  }
+  year = new Date().getFullYear();
 }

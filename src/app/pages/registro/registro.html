@@ -1,0 +1,18 @@
+<section class="panel" style="max-width: 460px; margin: 0 auto; padding: 18px">
+  <h1>Registro</h1>
+  <form (ngSubmit)="registrar()" class="form">
+    <label class="label">Email</label>
+    <input class="input" [(ngModel)]="email" name="email" type="email" required />
+
+    <label class="label">Contraseña</label>
+    <input class="input" [(ngModel)]="password" name="password" type="password" required />
+
+    <button class="btn btn-primary" type="submit">Crear cuenta</button>
+
+    @if (error) {
+    <p class="error">{{ error }}</p>
+    } @if (okMsg) {
+    <p class="ok">{{ okMsg }}</p>
+    }
+  </form>
+</section>

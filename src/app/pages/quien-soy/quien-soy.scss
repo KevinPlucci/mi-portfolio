@@ -1,14 +1,19 @@
-h1 {
-color: #007acc;
+.panel{
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 18px;
 }
 
-
-ul {
-list-style: none;
-padding: 0;
+.qs { padding: 10px; }
+.qs__header{ display:flex; gap:16px; align-items:center; margin-bottom:14px; }
+.qs__avatar{
+  width:110px; height:110px; border-radius:14px; object-fit:cover;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
 }
+.qs__datos{ list-style:none; padding:0; margin:6px 0 0 0; }
+.qs__datos li{ margin:4px 0; }
 
-
-ul li {
-margin: 0.5rem 0;
-}
+.qs__juego{ margin-top:14px; }
+.qs__desc{ opacity:.9; margin:6px 0 0 0; }

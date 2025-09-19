@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,26 +12,36 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.scss'],
 })
 export class LoginComponent {
+  /* inyectá con inject(AuthService) */
+  private auth = inject(AuthService);
+  private router = inject(Router);
+
   email = '';
   password = '';
-  error = '';
   loading = false;
-
-  constructor(private router: Router) {}
+  error = '';
 
   async login() {
     this.loading = true;
     this.error = '';
-    await new Promise((r) => setTimeout(r, 300));
-
-    const ok = this.email === 'test@demo.com' && this.password === '1234';
-    if (ok) {
-      localStorage.setItem('auth', 'ok');
+    try {
+      await this.auth.login(this.email, this.password);
       this.router.navigateByUrl('/');
-    } else {
-      this.error = 'Credenciales inválidas';
+    } catch {
+      this.error = 'Email o contraseña inválidos.';
+    } finally {
+      this.loading = false;
     }
+  }
 
-    this.loading = false;
+  usarDemo() {
+    this.email = 'demo@alumno.com';
+    this.password = '123456';
+    this.login();
+  }
+  usarInvitado() {
+    this.email = 'invitado@demo.com';
+    this.password = 'guest123';
+    this.login();
   }
 }

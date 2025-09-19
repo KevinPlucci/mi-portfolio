@@ -1,2 +1,33 @@
-<h1>Home</h1>
-<p>Bienvenido a mi portfolio en Angular.</p>
+<section class="panel" style="padding: 16px">
+  @if (user$ | async; as user) {
+  <div class="userbar">
+    <div><strong>Sesión:</strong> {{ user.email }}</div>
+    <button class="btn btn-ghost" (click)="logout()">Log Out</button>
+  </div>
+  } @else {
+  <div class="userbar">
+    <a routerLink="/login" class="btn btn-primary">Login</a>
+    <a routerLink="/registro" class="btn btn-ghost">Registro</a>
+  </div>
+  }
+</section>
+
+<h2 style="margin: 16px 0">Juegos</h2>
+<section class="grid">
+  <article class="card-juego">
+    <div class="thumb"></div>
+    <div class="info">
+      <h3>Juego 1</h3>
+      <p class="muted">Descripción breve.</p>
+      <button class="btn btn-primary">Jugar</button>
+    </div>
+  </article>
+  <article class="card-juego">
+    <div class="thumb"></div>
+    <div class="info">
+      <h3>Juego 2</h3>
+      <p class="muted">Descripción breve.</p>
+      <button class="btn btn-primary">Jugar</button>
+    </div>
+  </article>
+</section>

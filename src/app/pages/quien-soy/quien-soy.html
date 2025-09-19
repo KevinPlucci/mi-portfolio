@@ -1,8 +1,19 @@
-<div class="card">
-  <h1>🙋 Quién Soy</h1>
-  <p>Soy Kevin Plucci, desarrollador web con foco en Angular.</p>
-  <ul>
-    <li>💻 Stack: Angular, TypeScript, HTML, CSS</li>
-    <li>📧 Contacto: kevinplucci7@gmail.com</li>
-  </ul>
-</div>
+<section class="qs panel">
+  <header class="qs__header">
+    <img class="qs__avatar" src="assets/img/alumno.jpg" alt="Foto del alumno" />
+    <div>
+      <h1>Datos personales del alumno</h1>
+      <ul class="qs__datos">
+        <li><strong>Nombre:</strong> {{ alumno.nombre }}</li>
+        <li><strong>DNI:</strong> {{ alumno.dni }}</li>
+        <li><strong>Curso:</strong> {{ alumno.curso }}</li>
+        <li><strong>Mail:</strong> {{ alumno.mail }}</li>
+      </ul>
+    </div>
+  </header>
+
+  <article class="qs__juego panel">
+    <h2>{{ juegoPropio.titulo }}</h2>
+    <p class="qs__desc">{{ juegoPropio.descripcion }}</p>
+  </article>
+</section>
