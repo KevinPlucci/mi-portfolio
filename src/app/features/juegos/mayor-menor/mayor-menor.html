@@ -1,0 +1,37 @@
+<section class="wrap">
+  <h2>Mayor o Menor</h2>
+
+  <div class="row">
+    <div class="cardbox">
+      <div class="label">Carta actual</div>
+      <div class="card">{{ current.display }}</div>
+    </div>
+
+    <div class="actions">
+      <button type="button" (click)="guess('menor')" [disabled]="finished">
+        Menor
+      </button>
+      <button type="button" (click)="guess('mayor')" [disabled]="finished">
+        Mayor
+      </button>
+    </div>
+
+    @if (next) {
+    <div class="cardbox">
+      <div class="label">Siguiente</div>
+      <div class="card">{{ next.display }}</div>
+    </div>
+    }
+  </div>
+
+  <div class="info">
+    <div>Puntaje: <strong>{{ score }}</strong></div>
+    <div>Mazo restante: <strong>{{ deck.length }}</strong></div>
+  </div>
+
+  @if (finished) {
+  <div class="result">Fin del mazo. ¡Puntaje final: {{ score }}!</div>
+  }
+
+  <button class="reset" type="button" (click)="reset()">Reiniciar</button>
+</section>

@@ -12,29 +12,35 @@ import { AuthService } from '../../core/auth.service';
   styleUrls: ['./registro.scss'],
 })
 export class RegistroComponent {
-  /* inyectá con inject(AuthService) */
   private auth = inject(AuthService);
   private router = inject(Router);
 
   email = '';
   password = '';
+  loading = false;
   error = '';
-  okMsg = '';
+  success = '';
 
-  async registrar() {
+  async register() {
     this.error = '';
-    this.okMsg = '';
+    this.success = '';
+    this.loading = true;
     try {
       await this.auth.register(this.email, this.password);
-      this.okMsg = 'Usuario creado. Redirigiendo…';
-      this.router.navigateByUrl('/');
+      // createUser deja al usuario autenticado → redirige a Home
+      this.success = 'Usuario creado con éxito. Redirigiendo...';
+      this.router.navigateByUrl('/home');
     } catch (e: any) {
       this.error =
         e?.code === 'auth/email-already-in-use'
-          ? 'El usuario ya está registrado.'
+          ? 'El usuario ya se encuentra registrado.'
+          : e?.code === 'auth/invalid-email'
+          ? 'El email no es válido.'
           : e?.code === 'auth/weak-password'
-          ? 'La contraseña es muy débil.'
-          : 'No se pudo registrar.';
+          ? 'La contraseña es demasiado débil.'
+          : 'No se pudo registrar el usuario.';
+    } finally {
+      this.loading = false;
     }
   }
 }

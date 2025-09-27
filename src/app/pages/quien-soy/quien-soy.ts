@@ -1,24 +1,24 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-quien-soy',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './quien-soy.html',
   styleUrls: ['./quien-soy.scss'],
 })
 export class QuienSoyComponent {
-  // Datos personales
   alumno = {
-    nombre: 'Kevin Martin Plucci',
-    dni: '42367060',
+    nombre: 'KKevin Martin Plucci',
+    legajo: '110646',
     curso: 'Laboratorio 4',
-    mail: 'pluccikevin7@gmail.com',
-  };
-
-  // Explicación del juego propio
-  juegoPropio = {
-    titulo: 'Mi Juego Propio',
-    descripcion: `Breve explicación del juego: objetivo, mecánicas principales,
-    tecnologías usadas y cómo se gana/pierde.`,
+    email: 'pluccikevin7@ejemplo.com',
+    juego: {
+      titulo: 'Mi juego propio',
+      descripcion:
+        'Breve explicación del juego: tecnología usada, objetivo, qué lo hace único, y enlace demo si existe.',
+    },
+    imagenUrl: 'assets/images/alumno.jpg', // Colocá tu foto en esta ruta
   };
 }

@@ -1,0 +1,24 @@
+.chat {
+  max-width: 820px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,.06);
+}
+
+.box { display: grid; grid-template-rows: 1fr auto; height: 60vh; }
+.messages { overflow: auto; padding: .5rem 0; }
+
+.msg {
+  padding: .5rem .75rem; border-bottom: 1px solid #f0f0f0;
+  .meta { font-size: .8rem; color: #666; display: flex; gap: .5rem; }
+  .user { font-weight: 600; }
+  .text { margin-top: .2rem; }
+}
+
+.input {
+  display: grid; grid-template-columns: 1fr auto; gap: .5rem; margin-top: .75rem;
+  input { padding: .7rem .9rem; border: 1px solid #ddd; border-radius: 10px; }
+  button { border: 0; border-radius: 10px; padding: .7rem 1rem; font-weight: 700; background: #1976d2; color: #fff; cursor: pointer; }
+}

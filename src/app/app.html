@@ -1,14 +1,26 @@
-<header>
-  <nav>
-    <a routerLink="/">Home</a>
-    <a routerLink="/login">Login</a>
-    <a routerLink="/registro">Registro</a>
-    <a routerLink="/quien-soy">Quién Soy</a>
-  </nav>
-</header>
+<nav class="topbar">
+  <div class="wrap">
+    <div class="links">
+      <a
+        routerLink="/home"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >Home</a
+      >
 
-<main>
-  <router-outlet></router-outlet>
+      <a routerLink="/quien-soy" routerLinkActive="active">Quién Soy</a>
+
+      @if (auth.user$ | async; as user) {
+      <span class="user">Hola, {{ user.email }}</span>
+      <button class="btn" (click)="logout()">Cerrar sesión</button>
+      } @else {
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+      <a routerLink="/registro" routerLinkActive="active">Registro</a>
+      }
+    </div>
+  </div>
+</nav>
+
+<main class="page">
+  <router-outlet />
 </main>
-
-<footer>© {{ year }} Mi Portfolio</footer>

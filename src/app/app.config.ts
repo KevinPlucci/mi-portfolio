@@ -1,22 +1,22 @@
 import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  provideRouter,
+  withPreloading,
+  PreloadAllModules,
+} from '@angular/router';
 import { routes } from './app.routes';
-
-import { provideFirebaseApp } from '@angular/fire/app';
-import { initializeApp, getApp } from 'firebase/app';
-import { provideAuth } from '@angular/fire/auth';
-import { getAuth } from 'firebase/auth';
-import { provideFirestore } from '@angular/fire/firestore';
-import { getFirestore } from 'firebase/firestore';
-
+import { provideClientHydration } from '@angular/platform-browser';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideAuth, getAuth } from '@angular/fire/auth';
+import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideClientHydration(),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    // Usamos SIEMPRE la app inicializada explícitamente:
-    provideAuth(() => getAuth(getApp())),
-    provideFirestore(() => getFirestore(getApp())),
+    provideAuth(() => getAuth()),
+    provideFirestore(() => getFirestore()),
   ],
 };

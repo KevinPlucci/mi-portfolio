@@ -1,0 +1,9 @@
+.wrap { max-width: 900px; margin: 2rem auto; background:#fff; padding:1.5rem; border-radius:16px; box-shadow:0 8px 30px rgba(0,0,0,.06); }
+.status { display:flex; align-items:center; justify-content:space-between; }
+.mask { font: 700 1.6rem/1.8rem ui-sans-serif, system-ui; letter-spacing: .1rem; }
+.tries { color:#555; }
+.letters { display:grid; grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); gap: .4rem; margin: 1rem 0; }
+button { padding:.5rem; border:1px solid #eee; border-radius:8px; background:#fafafa; cursor:pointer; }
+button:disabled { opacity:.5; cursor:not-allowed; }
+.result { margin:.75rem 0; font-weight:700; }
+.reset { background:#1976d2; color:#fff; border:0; padding:.6rem .9rem; border-radius:10px; font-weight:700; }

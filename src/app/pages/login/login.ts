@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,16 @@ import { AuthService } from '../../core/auth.service';
   styleUrls: ['./login.scss'],
 })
 export class LoginComponent {
-  /* inyectá con inject(AuthService) */
+  form: any;
+  onSubmit() {
+    throw new Error('Method not implemented.');
+  }
+  usarInvitado() {
+    throw new Error('Method not implemented.');
+  }
+  usarDemo() {
+    throw new Error('Method not implemented.');
+  }
   private auth = inject(AuthService);
   private router = inject(Router);
 
@@ -22,26 +32,42 @@ export class LoginComponent {
   error = '';
 
   async login() {
-    this.loading = true;
     this.error = '';
+    this.loading = true;
     try {
-      await this.auth.login(this.email, this.password);
-      this.router.navigateByUrl('/');
-    } catch {
-      this.error = 'Email o contraseña inválidos.';
+      await this.auth.login(
+        this.email,
+        this.password /* validar contra Firebase */
+      );
+      this.router.navigateByUrl('/home');
+    } catch (e: any) {
+      this.error =
+        e?.code === 'auth/invalid-credential'
+          ? 'Usuario o contraseña inválidos.'
+          : e?.code === 'auth/user-not-found'
+          ? 'El usuario no existe.'
+          : e?.code === 'auth/invalid-email'
+          ? 'El email no es válido.'
+          : e?.code === 'auth/too-many-requests'
+          ? 'Demasiados intentos; probá más tarde.'
+          : 'No se pudo iniciar sesión.';
     } finally {
       this.loading = false;
     }
   }
 
-  usarDemo() {
-    this.email = 'demo@alumno.com';
-    this.password = '123456';
+  // Accesos rápidos: completan y loguean contra Firebase (estos usuarios deben existir)
+  accesoDemo() {
+    const { demo } = environment.demoUsers;
+    this.email = demo.email;
+    this.password = demo.password;
     this.login();
   }
-  usarInvitado() {
-    this.email = 'invitado@demo.com';
-    this.password = 'guest123';
+
+  accesoInvitado() {
+    const { invitado } = environment.demoUsers;
+    this.email = invitado.email;
+    this.password = invitado.password;
     this.login();
   }
 }
