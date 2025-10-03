@@ -14,6 +14,7 @@ export class AppComponent {
   private authSvc = inject(AuthService);
   auth = this.authSvc;
   year = new Date().getFullYear();
+  usuario: any;
 
   async logout() {
     await this.authSvc.logout();

@@ -13,15 +13,15 @@ type Card = { value: number; display: string };
 export class MayorMenorComponent implements OnInit {
   deck: Card[] = [];
   current!: Card;
-  next?: Card;
   score = 0;
   finished = false;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.reset();
   }
 
-  reset() {
+  reset(): void {
+    // Generar mazo (4 palos x 13 valores)
     const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
     const toDisp = (v: number) =>
       v === 1
@@ -33,40 +33,46 @@ export class MayorMenorComponent implements OnInit {
         : v === 13
         ? 'K'
         : String(v);
+
     const cards: Card[] = [];
-    for (let s = 0; s < 4; s++)
+    for (let s = 0; s < 4; s++) {
       values.forEach((v) => cards.push({ value: v, display: toDisp(v) }));
+    }
+
     this.deck = this.shuffle(cards);
     this.score = 0;
     this.finished = false;
-    this.current = this.deck.shift()!;
-    this.next = undefined;
+    this.current = this.deck.shift()!; // primera carta visible
   }
 
-  shuffle<T>(a: T[]) {
-    const b = [...a];
-    for (let i = b.length - 1; i > 0; i--) {
+  private shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [b[i], b[j]] = [b[j], b[i]];
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    return b;
+    return a;
   }
 
-  guess(kind: 'mayor' | 'menor') {
+  guess(kind: 'mayor' | 'menor'): void {
     if (this.finished) return;
-    const card = this.deck.shift();
-    if (!card) {
+
+    const next = this.deck.shift();
+    if (!next) {
       this.finished = true;
       return;
     }
 
-    this.next = card;
+    // Regla: acierta si la "siguiente" es >= (mayor) o <= (menor) a la actual.
     const ok =
       kind === 'mayor'
-        ? card.value >= this.current.value
-        : card.value <= this.current.value;
+        ? next.value >= this.current.value
+        : next.value <= this.current.value;
+
     if (ok) this.score++;
-    this.current = card;
+
+    // Revelamos la carta y pasa a ser la "actual"
+    this.current = next;
 
     if (this.deck.length === 0) this.finished = true;
   }

@@ -18,10 +18,10 @@ export class LoginComponent {
     throw new Error('Method not implemented.');
   }
   usarInvitado() {
-    throw new Error('Method not implemented.');
+    this.accesoInvitado();
   }
   usarDemo() {
-    throw new Error('Method not implemented.');
+    this.accesoDemo();
   }
   private auth = inject(AuthService);
   private router = inject(Router);
@@ -32,31 +32,18 @@ export class LoginComponent {
   error = '';
 
   async login() {
-    this.error = '';
     this.loading = true;
+    this.error = '';
     try {
-      await this.auth.login(
-        this.email,
-        this.password /* validar contra Firebase */
-      );
+      await this.auth.login(this.email, this.password);
       this.router.navigateByUrl('/home');
     } catch (e: any) {
-      this.error =
-        e?.code === 'auth/invalid-credential'
-          ? 'Usuario o contraseña inválidos.'
-          : e?.code === 'auth/user-not-found'
-          ? 'El usuario no existe.'
-          : e?.code === 'auth/invalid-email'
-          ? 'El email no es válido.'
-          : e?.code === 'auth/too-many-requests'
-          ? 'Demasiados intentos; probá más tarde.'
-          : 'No se pudo iniciar sesión.';
+      this.error = e?.message ?? 'Error al iniciar sesión';
     } finally {
       this.loading = false;
     }
   }
 
-  // Accesos rápidos: completan y loguean contra Firebase (estos usuarios deben existir)
   accesoDemo() {
     const { demo } = environment.demoUsers;
     this.email = demo.email;

@@ -1,36 +1,42 @@
 <section class="chat">
-  <h2>Sala de Chat</h2>
+  <div class="card">
+    <h2>Chat</h2>
 
-  <div class="box">
-    <div class="messages">
-      @if (messages$ | async; as messages) { @for (m of messages ?? []; track
-      m.id ?? $index) {
+    <div class="messages" id="messages">
+      @for (m of messages$ | async; track m.id) {
       <div class="msg">
         <div class="meta">
-          <span class="user">{{ m.email || 'usuario' }}</span>
-          <span class="time">
-            {{ (m.createdAt?.toDate ? m.createdAt.toDate() : m.createdAt) |
-            date:'short' }}
-          </span>
+          <span class="who">{{ m.email || 'Anónimo' }}</span>
+          @if (m.createdAt?.toDate) {
+          <span class="time"> {{ m.createdAt.toDate() | date: 'short' }} </span>
+          }
         </div>
         <div class="text">{{ m.text }}</div>
       </div>
       } @empty {
-      <p class="empty">No hay mensajes.</p>
-      } } @else {
-      <p class="loading">Cargando…</p>
+      <p class="muted">No hay mensajes aún. ¡Escribí el primero!</p>
       }
     </div>
-  </div>
 
-  <form class="input" (ngSubmit)="send()">
-    <input
-      type="text"
-      [(ngModel)]="text"
-      name="text"
-      placeholder="Escribí un mensaje…"
-      autocomplete="off"
-    />
-    <button type="submit">Enviar</button>
-  </form>
+    <form class="composer" (ngSubmit)="send()">
+      <input
+        type="text"
+        placeholder="Escribe un mensaje…"
+        [(ngModel)]="text"
+        name="text"
+        autocomplete="off"
+      />
+      <button
+        class="btn btn-primary"
+        type="submit"
+        [disabled]="sending() || !text.trim()"
+      >
+        Enviar
+      </button>
+    </form>
+
+    @if (error()) {
+    <p class="error">{{ error() }}</p>
+    }
+  </div>
 </section>

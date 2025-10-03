@@ -1,61 +1,81 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { Auth } from '@angular/fire/auth';
 import {
   Firestore,
-  addDoc,
   collection,
   collectionData,
+  addDoc,
+  serverTimestamp,
   query,
   orderBy,
   limit,
-  serverTimestamp,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
-interface ChatMessage {
+type ChatMessage = {
   id?: string;
-  uid: string | null;
+  uid: string;
   email: string | null;
   text: string;
-  createdAt: any;
-}
+  createdAt: any; // Timestamp | FieldValue (hasta que se resuelva el serverTimestamp)
+};
+
+const CHAT_COLLECTION = 'chatMessages'; // 👈 usa el mismo nombre que tus reglas
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss'],
 })
 export class ChatComponent {
-  private db = inject(Firestore);
+  private fs = inject(Firestore);
   private auth = inject(Auth);
 
-  messages$!: Observable<ChatMessage[]>;
-  text = '';
+  // stream de mensajes ordenados
+  messages$: Observable<ChatMessage[]> = collectionData(
+    query(
+      collection(this.fs, CHAT_COLLECTION),
+      orderBy('createdAt', 'asc'),
+      limit(200)
+    ),
+    { idField: 'id' }
+  ) as Observable<ChatMessage[]>;
 
-  constructor() {
-    const col = collection(this.db, 'chatMessages');
-    const q = query(col, orderBy('createdAt', 'asc'), limit(200));
-    this.messages$ = collectionData(q, { idField: 'id' }) as Observable<
-      ChatMessage[]
-    >;
-  }
+  text = '';
+  sending = signal(false);
+  error = signal<string | null>(null);
 
   async send() {
+    const t = this.text.trim();
+    if (!t) return;
     const user = this.auth.currentUser;
-    const trimmed = this.text.trim();
-    if (!user || !trimmed) return;
+    if (!user) {
+      this.error.set('Debes iniciar sesión para chatear.');
+      return;
+    }
 
-    const col = collection(this.db, 'chatMessages');
-    await addDoc(col, {
-      uid: user.uid,
-      email: user.email ?? null,
-      text: trimmed,
-      createdAt: serverTimestamp(),
-    });
-    this.text = '';
+    try {
+      this.sending.set(true);
+      this.error.set(null);
+
+      await addDoc(collection(this.fs, CHAT_COLLECTION), {
+        uid: user.uid,
+        email: user.email,
+        text: t,
+        createdAt: serverTimestamp(),
+      } satisfies ChatMessage);
+
+      this.text = '';
+    } catch (e: any) {
+      this.error.set(e?.message ?? 'No se pudo enviar el mensaje');
+      console.error(e);
+    } finally {
+      this.sending.set(false);
+    }
   }
 }

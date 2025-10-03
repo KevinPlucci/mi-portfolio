@@ -1,9 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../core/auth.service';
-import { Observable } from 'rxjs';
-import { User } from '@angular/fire/auth';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -13,13 +11,21 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./home.scss'],
 })
 export class HomeComponent {
-  private authSvc = inject(AuthService);
-  user$: Observable<User | null> = this.authSvc.user$;
+  // Inyectamos el servicio para usar user$ en el template y hacer logout
+  public auth = inject(AuthService);
 
-  // Usado por el template con la nueva sintaxis @if
-  auth = this.authSvc;
+  loadingLogout = false;
 
   async logout() {
-    await this.authSvc.logout();
+    if (this.loadingLogout) return;
+    this.loadingLogout = true;
+    try {
+      await this.auth.logout(); // asumiendo que tu AuthService expone logout()
+      // si querés redirigir, podés hacerlo desde AuthService o aquí con Router
+    } catch (err) {
+      console.error(err);
+    } finally {
+      this.loadingLogout = false;
+    }
   }
 }

@@ -1,4 +1,28 @@
-<section class="wrap">
-  <h2>Listados</h2>
-  <p>Sección placeholder. Aquí irán tus listados y rankings.</p>
+<section class="ranking">
+  <div class="card">
+    <h2>Listados</h2>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Usuario</th>
+          <th>Puntos</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of top$ | async; track r.id; let i = $index) {
+        <tr>
+          <td>{{ i + 1 }}</td>
+          <td>{{ r.email || r.uid }}</td>
+          <td class="num">{{ r.puntos }}</td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="3">Sin datos por ahora.</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 </section>

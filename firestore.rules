@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // CHAT: solo usuarios autenticados pueden leer y escribir
+    match /chatMessages/{docId} {
+      // leer solo si hay sesión
+      allow read: if request.auth != null;
+
+      // crear mensaje si:
+      // - hay sesión
+      // - el documento solo trae estos campos
+      // - el uid coincide con el del usuario
+      // - text es string entre 1 y 500 chars
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid','email','text','createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 500;
+
+      // no permitir editar/borrar mensajes (simple)
+      allow update, delete: if false;
+    }
+
+    // LISTADOS / RANKING: lectura pública, escritura con sesión (ajustá si querés)
+    match /ranking/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}

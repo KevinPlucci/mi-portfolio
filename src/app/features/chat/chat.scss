@@ -1,24 +1,48 @@
-.chat {
+:host {
+  --primary: #1976d2;
+  --primary-600: #1565c0;
+  --ring: rgba(25,118,210,.35);
+  --muted: #6b7280;
+  --card-bg: #fff;
+  --border: #e5e7eb;
+  --shadow: 0 14px 40px rgba(0,0,0,.06);
+}
+
+.chat { padding: 24px 16px; display: grid; place-items: center; }
+
+.card {
+  width: 100%;
   max-width: 820px;
-  margin: 2rem auto;
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 16px;
-  padding: 1.2rem;
-  box-shadow: 0 8px 30px rgba(0,0,0,.06);
+  box-shadow: var(--shadow);
+  padding: 18px;
 }
 
-.box { display: grid; grid-template-rows: 1fr auto; height: 60vh; }
-.messages { overflow: auto; padding: .5rem 0; }
+h2 { margin: 6px 0 12px; font-size: 26px; }
 
-.msg {
-  padding: .5rem .75rem; border-bottom: 1px solid #f0f0f0;
-  .meta { font-size: .8rem; color: #666; display: flex; gap: .5rem; }
-  .user { font-weight: 600; }
-  .text { margin-top: .2rem; }
+.messages {
+  height: 360px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fafafa;
 }
+.msg { background:#fff; border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+.meta { font-size:12px; color:var(--muted); display:flex; gap:8px; }
+.meta .who { font-weight:600; }
+.text { margin-top:4px; font-size:15px; }
 
-.input {
-  display: grid; grid-template-columns: 1fr auto; gap: .5rem; margin-top: .75rem;
-  input { padding: .7rem .9rem; border: 1px solid #ddd; border-radius: 10px; }
-  button { border: 0; border-radius: 10px; padding: .7rem 1rem; font-weight: 700; background: #1976d2; color: #fff; cursor: pointer; }
+.composer { display:flex; gap:10px; margin-top:12px; }
+.composer input {
+  flex:1; height:40px; border:1px solid var(--border); border-radius:10px; padding:0 12px;
+  &:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 4px var(--ring); }
 }
+.btn {
+  appearance:none; border:0; border-radius:12px; padding:10px 16px; font-weight:700; cursor:pointer;
+  transition: background .2s ease, box-shadow .2s ease, transform .05s ease;
+  &:active { transform: translateY(1px); }
+}
+.btn-primary { background:var(--primary); color:#fff; &:hover{ background:var(--primary-600); } }
+.error { margin-top:8px; color:#b91c1c; }
