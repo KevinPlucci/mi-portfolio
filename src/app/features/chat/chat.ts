@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { Auth } from '@angular/fire/auth';
 import {
   Firestore,
@@ -20,15 +19,15 @@ type ChatMessage = {
   uid: string;
   email: string | null;
   text: string;
-  createdAt: any; // Timestamp | FieldValue (hasta que se resuelva el serverTimestamp)
+  createdAt: any;
 };
 
-const CHAT_COLLECTION = 'chatMessages'; // 👈 usa el mismo nombre que tus reglas
+const CHAT_COLLECTION = 'chatMessages';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AsyncPipe], // 👈 importa AsyncPipe
   templateUrl: './chat.html',
   styleUrls: ['./chat.scss'],
 })
@@ -36,7 +35,6 @@ export class ChatComponent {
   private fs = inject(Firestore);
   private auth = inject(Auth);
 
-  // stream de mensajes ordenados
   messages$: Observable<ChatMessage[]> = collectionData(
     query(
       collection(this.fs, CHAT_COLLECTION),
