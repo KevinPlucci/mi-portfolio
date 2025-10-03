@@ -1,54 +1,39 @@
 <section class="home">
-  <h2>Bienvenido a mi Porfolio</h2>
-  <p>Componente principal. Accesos a juegos y listados.</p>
+  <div class="card">
+    <h1>Bienvenido a mi Porfolio</h1>
+    <p>Componente principal. Accesos a juegos y listados.</p>
 
-  @if (auth.user$ | async; as user) {
-
-  <div class="badge">Sesión: <strong>{{ $any(user).email }}</strong></div>
-  <button class="btn" (click)="logout()">Cerrar sesión</button>
-
-  <div class="grid">
-    <a class="card" routerLink="/juegos" tabindex="0">
-      <h3>Juegos</h3>
-      <p>Ahorcado y Mayor/Menor.</p>
-    </a>
-
-    <a class="card" routerLink="/listados" tabindex="0">
-      <h3>Listados</h3>
-      <p>Consultas y rankings.</p>
-    </a>
-
-    <a class="card" routerLink="/chat" tabindex="0">
-      <h3>Chat</h3>
-      <p>Acceso a la sala (solo logueados).</p>
-    </a>
-  </div>
-
-  } @else {
-
-  <div class="badge">Estás navegando como invitado.</div>
-
-  <div class="auth-actions">
-    <a class="btn link" routerLink="/login">Ir a Login</a>
-    <a class="btn link" routerLink="/registro">Ir a Registro</a>
-  </div>
-
-  <div class="grid">
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Juegos</h3>
-      <p>Logueate para jugar.</p>
+    <div class="session">
+      @if (auth.user$ | async; as user) {
+      <span class="badge">Sesión: <strong>{{ user.email }}</strong></span>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="logout()"
+        [disabled]="loadingLogout"
+      >
+        Cerrar sesión
+      </button>
+      } @else {
+      <span class="badge muted">Sin sesión</span>
+      }
     </div>
 
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Listados</h3>
-      <p>Logueate para ver listados.</p>
-    </div>
+    <div class="grid">
+      <a class="tile" routerLink="/juegos">
+        <h3>Juegos</h3>
+        <p>Ahorcado y Mayor/Menor.</p>
+      </a>
 
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Chat</h3>
-      <p>Solo usuarios logueados.</p>
+      <a class="tile" routerLink="/listados">
+        <h3>Listados</h3>
+        <p>Consultas y rankings.</p>
+      </a>
+
+      <a class="tile" routerLink="/chat">
+        <h3>Chat</h3>
+        <p>Acceso a la sala (solo logueados).</p>
+      </a>
     </div>
   </div>
-
-  }
 </section>
