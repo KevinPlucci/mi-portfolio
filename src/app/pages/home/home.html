@@ -1,7 +1,9 @@
 <section class="home">
-  <h2>Bienvenido a mi Porfolio</h2>
-  <p>Componente principal. Accesos a juegos y listados.</p>
+  <div class="card">
+    <h1>Bienvenido a mi Porfolio</h1>
+    <p>Componente principal. Accesos a juegos y listados.</p>
 
+<<<<<<< HEAD
   @if (auth.user$ | async; as user) {
   <!-- Badge + botón en la misma fila, centrados, con espacio -->
   <div class="session-row">
@@ -41,17 +43,43 @@
     <div class="card disabled" tabindex="-1" aria-disabled="true">
       <h3>Juegos</h3>
       <p>Logueate para jugar.</p>
+=======
+    <div class="session">
+      @if (auth.user$ | async; as user) {
+      <span class="badge">Sesión: <strong>{{ user.email }}</strong></span>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="logout()"
+        [disabled]="loadingLogout"
+      >
+        Cerrar sesión
+      </button>
+      } @else {
+      <span class="badge muted">Sin sesión</span>
+      }
+>>>>>>> f50f2427d40a0389886c8f4f802fe7e0cb841e46
     </div>
 
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Listados</h3>
-      <p>Logueate para ver listados.</p>
-    </div>
+    <div class="grid">
+      <a class="tile" routerLink="/juegos">
+        <h3>Juegos</h3>
+        <p>Ahorcado y Mayor/Menor.</p>
+      </a>
 
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Chat</h3>
-      <p>Solo usuarios logueados.</p>
+      <a class="tile" routerLink="/listados">
+        <h3>Listados</h3>
+        <p>Consultas y rankings.</p>
+      </a>
+
+      <a class="tile" routerLink="/chat">
+        <h3>Chat</h3>
+        <p>Acceso a la sala (solo logueados).</p>
+      </a>
     </div>
   </div>
+<<<<<<< HEAD
   }
+=======
+>>>>>>> f50f2427d40a0389886c8f4f802fe7e0cb841e46
 </section>
