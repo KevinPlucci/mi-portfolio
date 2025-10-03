@@ -8,39 +8,29 @@
   --danger-600: #b91c1c;
   --danger-700: #991b1b;
 
-  --text-on-primary: #ffffff;
-  --text-on-danger: #ffffff;
-
   --card-bg: #ffffff;
   --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   --border: #e5e7eb;
   --muted: #6b7280;
 }
 
+/* 👇 ESTA llave de apertura es la que faltaba */
 .home {
   padding: 32px 16px;
   display: grid;
   place-items: center;
-<<<<<<< HEAD
   text-align: center;
 
-  h2 {
-    margin: 0 0 6px;
-    font-size: 28px;
-  }
-  p {
-    margin: 0 0 8px;
-    color: var(--muted);
-  }
+  h2 { margin: 0 0 6px; font-size: 28px; }
+  p  { margin: 0 0 8px; color: var(--muted); }
 }
 
-/* Fila para badge + botón, centrados y con espacio entre sí */
 .session-row {
   display: inline-flex;
   align-items: center;
-  gap: 12px;              /* <-- separación visible */
+  gap: 12px;
   margin: 10px 0 18px;
-  flex-wrap: wrap;        /* si achica pantalla, salta de línea prolijo */
+  flex-wrap: wrap;
 }
 
 .badge {
@@ -59,7 +49,7 @@
   }
 }
 
-/* ====== GRID EN FILA ====== */
+/* Cards en FILA (3 col), responsivo a 2 y 1 */
 .grid {
   width: 100%;
   max-width: 1040px;
@@ -71,22 +61,9 @@
   align-items: stretch;
   justify-items: stretch;
 }
+@media (max-width: 980px) { .grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); } }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
 
-/* 2 columnas en tablets */
-@media (max-width: 980px) {
-  .grid {
-    grid-template-columns: repeat(2, minmax(220px, 1fr));
-  }
-}
-
-/* 1 columna en móviles */
-@media (max-width: 640px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Tarjetas */
 .grid > a.card,
 .grid > .card {
   text-align: left;
@@ -97,91 +74,23 @@
   text-decoration: none;
   color: inherit;
   box-shadow: var(--card-shadow);
-  transition: box-shadow 0.2s ease, transform 0.05s ease, border-color 0.2s ease;
+  transition: box-shadow .2s, transform .05s, border-color .2s;
 
   h3 { margin: 0 0 6px; }
   p  { margin: 0; color: var(--muted); }
 
   &:hover {
     border-color: var(--primary);
-    box-shadow: 0 6px 18px rgba(25, 118, 210, 0.15);
+    box-shadow: 0 6px 18px rgba(25,118,210,.15);
   }
 }
-
-/* Estado deshabilitado (sin sesión) */
 .grid > .card.disabled {
   pointer-events: none;
-  opacity: 0.65;
+  opacity: .65;
   border-color: #e5e7eb;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 18px rgba(0,0,0,.04);
 }
 
-/* ====== Botones ====== */
-=======
-}
-
-.card {
-  width: 100%;
-  max-width: 980px;
-  background: var(--card-bg);
-  border-radius: 16px;
-  box-shadow: var(--card-shadow);
-  padding: 24px;
-
-  h1 {
-    margin: 0 0 8px;
-    font-size: 28px;
-  }
-
-  p {
-    margin: 0 0 16px;
-    color: var(--muted);
-  }
-
-  .session {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
-
-    .badge {
-      background: #eef5fe;
-      color: var(--primary);
-      border: 1px solid var(--primary);
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-weight: 600;
-    }
-  }
-
-  .grid {
-    margin-top: 8px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-
-    .tile {
-      display: block;
-      padding: 18px;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      text-decoration: none;
-      color: inherit;
-      transition: box-shadow 0.2s ease, transform 0.05s ease, border-color 0.2s ease;
-
-      &:hover {
-        border-color: var(--primary);
-        box-shadow: 0 6px 18px rgba(25, 118, 210, 0.15);
-      }
-
-      h3 { margin: 0 0 6px; }
-      p  { margin: 0; color: var(--muted); }
-    }
-  }
-}
-
-/* ====== Botones (mismo sistema que en Login) ====== */
->>>>>>> f50f2427d40a0389886c8f4f802fe7e0cb841e46
 .btn {
   appearance: none;
   user-select: none;
@@ -191,53 +100,19 @@
   padding: 10px 16px;
   font-weight: 700;
   line-height: 1;
-  transition: transform 0.05s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: transform .05s, box-shadow .2s, background .2s, color .2s;
 
   &:active { transform: translateY(1px); }
-<<<<<<< HEAD
   &:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
-  &[disabled] { cursor: not-allowed; opacity: 0.9; }
+  &[disabled] { cursor: not-allowed; opacity: .9; }
 }
-
-=======
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 4px var(--ring);
-  }
-
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.9; /* sigue siendo visible */
-  }
-}
-
-/* Cerrar sesión en rojo con alto contraste */
->>>>>>> f50f2427d40a0389886c8f4f802fe7e0cb841e46
 .btn-danger {
   background: var(--danger);
-  color: var(--text-on-danger);
-  box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25);
-
-  &:hover:not([disabled]) {
-    background: var(--danger-600);
-    box-shadow: 0 8px 18px rgba(220, 38, 38, 0.35);
-  }
-  &:active:not([disabled]) { background: var(--danger-700); }
-<<<<<<< HEAD
-=======
-
-  &[disabled] {
-    background: #fde2e2;
-    color: #9b1c1c;
-  }
-}
-
-/* Responsive */
-@media (max-width: 820px) {
-  .card .grid { grid-template-columns: 1fr; }
->>>>>>> f50f2427d40a0389886c8f4f802fe7e0cb841e46
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(220,38,38,.25);
+  &:hover { background: var(--danger-600); box-shadow: 0 8px 18px rgba(220,38,38,.35); }
+  &:active { background: var(--danger-700); }
 }

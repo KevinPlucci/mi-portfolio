@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -27,15 +26,6 @@ service cloud.firestore {
     // LISTADOS / RANKING: lectura pública, escritura con sesión (ajustá si querés)
     match /ranking/{docId} {
       allow read: if true;
-=======
-// Firestore Security Rules
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Chat messages
-    match /chatMessages/{docId} {
-      allow read: if request.auth != null;   // ponelo en 'true' si querés chat público
->>>>>>> f50f2427d40a0389886c8f4f802fe7e0cb841e46
       allow write: if request.auth != null;
     }
   }
