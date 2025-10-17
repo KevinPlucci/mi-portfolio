@@ -22,10 +22,9 @@ import {
   query,
   orderBy,
   limit,
-  CollectionReference, // <-- 1. IMPORTAR ESTO
+  CollectionReference,
 } from '@angular/fire/firestore';
 
-// Importamos 'tap' para "espiar" el observable
 import { Observable, Subscription, tap } from 'rxjs';
 
 type ChatMessage = {
@@ -50,19 +49,17 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   private fs = inject(Firestore);
   private auth = inject(Auth);
 
+  // 👉 uid del usuario actual para el binding de clases
+  meUid: string | null = this.auth.currentUser?.uid ?? null;
+
   messages$: Observable<ChatMessage[]> = collectionData<ChatMessage>(
     query(
-      // 2. AÑADIR LA CONVERSIÓN DE TIPO AQUÍ -->
       collection(this.fs, CHAT_COLLECTION) as CollectionReference<ChatMessage>,
       orderBy('createdAt', 'asc'),
       limit(200)
     ),
     { idField: 'id' }
-  ).pipe(
-    tap((messages) => {
-      console.log('🔥 Mensajes recibidos desde Firestore:', messages);
-    })
-  );
+  ).pipe(tap((messages) => console.log('🔥 Mensajes:', messages)));
 
   text = '';
   sending = signal(false);
@@ -72,12 +69,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   private sub?: Subscription;
 
   ngAfterViewInit(): void {
-    console.log('📬 Suscribiéndose a los mensajes...');
-    this.sub = this.messages$.subscribe((messages) => {
-      console.log(
-        '📦 La suscripción ha recibido una actualización. Número de mensajes:',
-        messages.length
-      );
+    this.sub = this.messages$.subscribe(() => {
       queueMicrotask(() => {
         const el = this.messagesRef?.nativeElement;
         if (el) el.scrollTop = el.scrollHeight;
@@ -86,54 +78,36 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log('🗑️ Dando de baja la suscripción a los mensajes.');
     this.sub?.unsubscribe();
   }
 
   async send() {
     const t = this.text.trim();
-
     if (!t) return;
     if (t.length > 500) {
-      this.error.set('El mensaje es demasiado largo (máx. 500 caracteres).');
+      this.error.set('El mensaje es demasiado largo (máx. 500).');
       return;
     }
 
     const user = this.auth.currentUser;
     if (!user) {
-      console.error(
-        '⛔ Error: Intento de enviar mensaje sin usuario autenticado.'
-      );
       this.error.set('Debes iniciar sesión para chatear.');
       return;
     }
 
-    console.log('▶️ Iniciando envío de mensaje...');
     try {
       this.sending.set(true);
       this.error.set(null);
-
-      const messagePayload = {
+      await addDoc(collection(this.fs, CHAT_COLLECTION), {
         uid: user.uid,
         email: user.email,
         text: t,
         createdAt: serverTimestamp(),
-      };
-
-      console.log('📤 Enviando payload a Firestore:', messagePayload);
-
-      await addDoc(
-        collection(this.fs, CHAT_COLLECTION),
-        messagePayload as ChatMessage
-      );
-
-      console.log('✅ Mensaje enviado con éxito.');
+      } as ChatMessage);
       this.text = '';
     } catch (e: any) {
-      console.error('❌ Error al enviar el mensaje a Firestore:', e);
       this.error.set(e?.message ?? 'No se pudo enviar el mensaje');
     } finally {
-      console.log('⏹️ Finalizando proceso de envío.');
       this.sending.set(false);
     }
   }

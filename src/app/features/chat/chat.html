@@ -1,43 +1,55 @@
 <section class="chat">
-  <div class="card">
-    <h2>Chat</h2>
+  <div class="home-grid">
+    <div class="about-card blue-skin">
+      <div class="hero"><h2>Chat</h2></div>
 
-    <div class="messages" id="messages" #messagesRef>
-      @for (m of messages$ | async; track m.id) {
-      <div class="msg">
-        <div class="meta">
-          <span class="who">{{ m.email || 'Anónimo' }}</span>
-          @if (m.createdAt?.toDate) {
-          <span class="time">{{ m.createdAt.toDate() | date:'short' }}</span>
+      <div class="stream">
+        <div class="messages" id="messages" #messagesRef>
+          @for (m of messages$ | async; track m.id) {
+          <div
+            class="msg"
+            [class.me]="m.uid === meUid"
+            [class.other]="m.uid !== meUid"
+          >
+            <div class="meta">
+              <span class="who"
+                >{{ m.uid === meUid ? 'Tú' : (m.email || 'Anónimo') }}</span
+              >
+              @if (m.createdAt?.toDate) {
+              <span class="time"
+                >{{ m.createdAt.toDate() | date:'short' }}</span
+              >
+              }
+            </div>
+            <div class="text">{{ m.text }}</div>
+          </div>
+          } @empty {
+          <p class="muted">No hay mensajes aún. ¡Escribí el primero!</p>
           }
         </div>
-        <div class="text">{{ m.text }}</div>
+
+        <form class="composer" (ngSubmit)="send()">
+          <input
+            type="text"
+            placeholder="Escribe un mensaje…"
+            [(ngModel)]="text"
+            name="text"
+            autocomplete="off"
+            maxlength="500"
+          />
+          <button
+            class="btn primary"
+            type="submit"
+            [disabled]="sending() || !text.trim()"
+          >
+            Enviar
+          </button>
+        </form>
+
+        @if (error()) {
+        <p class="error">{{ error() }}</p>
+        }
       </div>
-      } @empty {
-      <p class="muted">No hay mensajes aún. ¡Escribí el primero!</p>
-      }
     </div>
-
-    <form class="composer" (ngSubmit)="send()">
-      <input
-        type="text"
-        placeholder="Escribe un mensaje…"
-        [(ngModel)]="text"
-        name="text"
-        autocomplete="off"
-        maxlength="500"
-      />
-      <button
-        class="btn btn-primary"
-        type="submit"
-        [disabled]="sending() || !text.trim()"
-      >
-        Enviar
-      </button>
-    </form>
-
-    @if (error()) {
-    <p class="error">{{ error() }}</p>
-    }
   </div>
 </section>

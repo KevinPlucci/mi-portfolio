@@ -1,24 +1,101 @@
 <section class="mm">
-  <h2>Mayor o Menor</h2>
+  <!-- Card principal centrada en grid 12 (igual a Quién Soy) -->
+  <div class="home-grid">
+    <div class="about-card blue-skin">
+      <div class="hero">
+        <h2>Mayor o Menor</h2>
+      </div>
 
-  @if (!finished) {
-  <div class="status">
-    <div class="card">Actual: <b>{{ label(current) }}</b></div>
-    <div>Puntos: <b>{{ score }}</b> — Rondas: <b>{{ rounds }}</b></div>
-  </div>
+      <!-- Panel interno claro para el juego -->
+      <div class="panel">
+        <!-- Estado de Carga Inicial -->
+        @if (loading() && !current()) {
+        <div class="status-box">Cargando mazo...</div>
+        }
 
-  <div class="actions">
-    <button type="button" class="btn" (click)="guess('menor')">Menor</button>
-    <button type="button" class="btn" (click)="guess('mayor')">Mayor</button>
-  </div>
+        <!-- Juego en Progreso -->
+        @if (!finished() && current()) {
+        <div class="game-board">
+          <div class="card-area">
+            <div class="card-box">
+              <p>Carta Actual</p>
+              <img
+                [src]="current()?.image"
+                [alt]="current()?.code"
+                class="card-img"
+              />
+            </div>
 
-  <button class="reset" type="button" (click)="reset()">Reiniciar</button>
-  } @else {
-  <div class="end">
-    <p>
-      Partida terminada — Puntaje: <b>{{ score }}</b> en {{ rounds }} rondas.
-    </p>
-    <button class="btn" type="button" (click)="reset()">Jugar de nuevo</button>
+            <div class="card-box next-card-box">
+              <p>Carta Oculta</p>
+              @if (loading() && rounds() >= 0 && !next()) {
+              <!-- dorso mientras carga -->
+              <img
+                src="https://deckofcardsapi.com/static/img/back.png"
+                alt="Carta boca abajo"
+                class="card-img loading"
+              />
+              } @else if (next()) {
+              <img
+                [src]="next()?.image"
+                [alt]="next()?.code"
+                class="card-img"
+              />
+              } @else {
+              <div class="card-placeholder">?</div>
+              }
+            </div>
+          </div>
+
+          <div class="result-message">{{ resultMessage() }}</div>
+
+          <div class="actions">
+            <button
+              type="button"
+              class="btn primary"
+              (click)="guess('menor')"
+              [disabled]="loading()"
+            >
+              Menor
+            </button>
+            <button
+              type="button"
+              class="btn primary"
+              (click)="guess('mayor')"
+              [disabled]="loading()"
+            >
+              Mayor
+            </button>
+          </div>
+        </div>
+
+        <div class="game-info">
+          <span>Puntos: <b>{{ score() }}</b></span>
+          <span>Rondas: <b>{{ rounds() }}</b></span>
+        </div>
+
+        <div class="footer-actions">
+          <button
+            class="btn secondary reset-btn"
+            type="button"
+            (click)="reset()"
+            [disabled]="loading()"
+          >
+            <span class="icon" aria-hidden="true">↻</span>
+            Reiniciar
+          </button>
+        </div>
+        } @else if (finished()) {
+        <!-- Fin del Juego -->
+        <div class="end-game">
+          <h3>Partida Terminada</h3>
+          <p>Puntaje Final: <b>{{ score() }}</b> en {{ rounds() }} rondas.</p>
+          <button class="btn primary" type="button" (click)="reset()">
+            Jugar de Nuevo
+          </button>
+        </div>
+        }
+      </div>
+    </div>
   </div>
-  }
 </section>
