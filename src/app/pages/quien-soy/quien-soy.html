@@ -1,19 +1,74 @@
-<section class="about">
-  <div class="card">
-    <div class="photo">
-      <img [src]="alumno.imagenUrl" alt="Foto del alumno" />
+<!-- Contenedor de 12 columnas para centrar la card en 3-3-6 -->
+<div class="home-grid">
+  <!-- Este div es el CUADRO INTERNO: conserva about-card + blue-skin -->
+  <div class="about-card blue-skin">
+    <div class="profile-header header">
+      <img
+        class="avatar"
+        src="../../../assets/img/alumno.jpg"
+        alt="Kevin Plucci"
+      />
+      <div>
+        <h2>Kevin Plucci</h2>
+        <p class="subtitle">Analista / Desarrollador</p>
+        <p class="bio">
+          Porfolio hecho con Angular standalone y Firebase. Incluye un chat en
+          tiempo real y varios juegos...
+        </p>
+        <div class="links">
+          <a
+            href="https://github.com/KevinPlucci"
+            target="_blank"
+            rel="noopener"
+            >GitHub</a
+          >
+          <a
+            href="https://www.linkedin.com/in/kevinplucci/"
+            target="_blank"
+            rel="noopener"
+            >LinkedIn</a
+          >
+        </div>
+      </div>
     </div>
-    <div class="info">
-      <h2>¿Quién Soy?</h2>
-      <ul>
-        <li><strong>Nombre:</strong> {{ alumno.nombre }}</li>
-        <li><strong>Legajo:</strong> {{ alumno.legajo }}</li>
-        <li><strong>Curso:</strong> {{ alumno.curso }}</li>
-        <li><strong>Email:</strong> {{ alumno.email }}</li>
-      </ul>
 
-      <h3>{{ alumno.juego.titulo }}</h3>
-      <p>{{ alumno.juego.descripcion }}</p>
+    <h3 class="section-title">Skills</h3>
+    <div class="chips skills-list">
+      <span class="chip">Angular</span>
+      <span class="chip">TypeScript</span>
+      <span class="chip">Firebase</span>
+      <span class="chip">SCSS</span>
+      <span class="chip">Flutter</span>
+      <span class="chip">DFD/DER</span>
+    </div>
+
+    <h3 class="section-title">Explicación de los juegos</h3>
+    <div class="grid games">
+      <article class="game-card">
+        <h4>Ahorcado</h4>
+        <p>Adiviná la palabra antes de completar el cuerpo. +1 por victoria.</p>
+      </article>
+
+      <article class="game-card">
+        <h4>Mayor o Menor</h4>
+        <p>Pronosticá la siguiente carta. Sumás por acierto.</p>
+      </article>
+
+      <article class="game-card">
+        <h4>Preguntados</h4>
+        <p>
+          Identificá el país según su bandera. Opciones múltiples, imágenes por
+          API.
+        </p>
+      </article>
+
+      <article class="game-card wide">
+        <h4>Secuencias</h4>
+        <p>
+          Dada una serie aritmética, elegí el siguiente número correcto entre 4
+          opciones.
+        </p>
+      </article>
     </div>
   </div>
-</section>
+</div>

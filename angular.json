@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
-  "newProjectRoot": "projects",
   "projects": {
     "mi-portfolio": {
       "projectType": "application",
@@ -14,52 +13,42 @@
           "options": {
             "outputPath": "dist/mi-portfolio",
             "index": "src/index.html",
+            "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/assets",
-              { "glob": "**/*", "input": "public" }
+              { "glob": "**/*", "input": "public", "output": "/" }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": []
           },
           "configurations": {
+            "development": {
+              "optimization": false,
+              "sourceMap": true
+            },
             "production": {
               "outputHashing": "all",
               "optimization": true,
               "sourceMap": false,
-              "extractLicenses": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
+              "budgets": [
+                { "type": "initial", "maximumWarning": "500kb", "maximumError": "1.5mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "6kb", "maximumError": "10kb" }
               ]
-            },
-            "development": {
-              "sourceMap": true,
-              "optimization": false
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular/build:dev-server",
-          "options": {
-            "buildTarget": "mi-portfolio:build"
-          },
           "configurations": {
-            "production": {
-              "buildTarget": "mi-portfolio:build:production"
-            },
-            "development": {
-              "buildTarget": "mi-portfolio:build:development"
-            }
+            "development": { "buildTarget": "mi-portfolio:build:development" },
+            "production": { "buildTarget": "mi-portfolio:build:production" }
           },
           "defaultConfiguration": "development"
         }
       }
     }
-  }
+  },
+  "cli": { "analytics": false }
 }

@@ -1,8 +1,8 @@
-.listados { padding: 1rem; }
+.encuestas-admin { padding: 1rem; }
 h2 { margin: 0 0 .8rem; }
-.mt { margin-top: 1.5rem; }
 table { width: 100%; border-collapse: collapse; background: #0f0f0f; color: #eee; border: 1px solid #222; border-radius: 12px; overflow: hidden; }
-th, td { padding: .6rem .8rem; border-bottom: 1px solid #222; text-align: left; }
+th, td { padding: .6rem .8rem; border-bottom: 1px solid #222; text-align: left; vertical-align: top; }
 thead th { background: #121212; font-weight: 600; }
 tbody tr:hover { background: #141414; }
 .empty { text-align: center; opacity: .8; }
+.comment { max-width: 420px; }

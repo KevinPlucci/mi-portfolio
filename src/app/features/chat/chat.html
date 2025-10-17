@@ -2,13 +2,13 @@
   <div class="card">
     <h2>Chat</h2>
 
-    <div class="messages" id="messages">
+    <div class="messages" id="messages" #messagesRef>
       @for (m of messages$ | async; track m.id) {
       <div class="msg">
         <div class="meta">
           <span class="who">{{ m.email || 'Anónimo' }}</span>
           @if (m.createdAt?.toDate) {
-          <span class="time"> {{ m.createdAt.toDate() | date: 'short' }} </span>
+          <span class="time">{{ m.createdAt.toDate() | date:'short' }}</span>
           }
         </div>
         <div class="text">{{ m.text }}</div>
@@ -25,6 +25,7 @@
         [(ngModel)]="text"
         name="text"
         autocomplete="off"
+        maxlength="500"
       />
       <button
         class="btn btn-primary"

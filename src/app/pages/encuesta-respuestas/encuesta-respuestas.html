@@ -1,0 +1,39 @@
+<section class="encuestas-admin">
+  <h2>Respuestas de la encuesta</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Usuario</th>
+        <th>Nombre</th>
+        <th>Edad</th>
+        <th>Teléfono</th>
+        <th>Satisfacción</th>
+        <th>Juegos jugados</th>
+        <th>Comentario</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (e of items$ | async; track e.id) {
+      <tr>
+        <td>
+          @if (e.createdAt?.toDate) { {{ e.createdAt.toDate() | date:'short' }}
+          }
+        </td>
+        <td>{{ e.email || e.uid }}</td>
+        <td>{{ e.nombre }}</td>
+        <td>{{ e.edad }}</td>
+        <td>{{ e.telefono }}</td>
+        <td>{{ e.satisfaccion }}</td>
+        <td>{{ jugadosToText(e.jugados) }}</td>
+        <td class="comment">{{ e.comentario }}</td>
+      </tr>
+      } @empty {
+      <tr>
+        <td class="empty" colspan="8">Sin respuestas aún</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</section>

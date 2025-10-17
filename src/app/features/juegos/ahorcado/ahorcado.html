@@ -1,27 +1,66 @@
-<section class="wrap">
-  <h2>Ahorcado</h2>
+<section class="ahorcado">
+  <!-- Card principal centrada en grid 12 -->
+  <div class="home-grid">
+    <div class="about-card blue-skin">
+      <div class="hero">
+        <h2>Ahorcado</h2>
+      </div>
 
-  <div class="status">
-    <div class="mask">{{ mascara }}</div>
-    <div class="tries">Errores: {{ errores }} / {{ maxErrores }}</div>
-  </div>
+      <div class="grid">
+        <!-- Lado izquierdo: horca -->
+        <div class="gallows">
+          <div class="base"></div>
+          <div class="post"></div>
+          <div class="arm"></div>
+          <div class="rope"></div>
 
-  <div class="letters">
-    <button
-      *ngFor="let l of letras"
-      [disabled]="elegidas.has(l) || gano || perdio"
-      (click)="elegir(l)"
-    >
-      {{ l }}
-    </button>
-  </div>
+          @if (errores >= 1) {
+          <div class="head"></div>
+          } @if (errores >= 2) {
+          <div class="body"></div>
+          } @if (errores >= 3) {
+          <div class="arm-l"></div>
+          } @if (errores >= 4) {
+          <div class="arm-r"></div>
+          } @if (errores >= 5) {
+          <div class="leg-l"></div>
+          } @if (errores >= 6) {
+          <div class="leg-r"></div>
+          }
+        </div>
 
-  <div class="result" *ngIf="gano">
-    🎉 ¡Ganaste! La palabra era <strong>{{ palabra }}</strong>.
-  </div>
-  <div class="result" *ngIf="perdio">
-    😵 Perdiste. La palabra era <strong>{{ palabra }}</strong>.
-  </div>
+        <!-- Lado derecho: panel de juego -->
+        <div class="panel">
+          <p class="mask">{{ mascara }}</p>
 
-  <button class="reset" (click)="reiniciar()">Reiniciar</button>
+          <div class="kbd">
+            @for (l of abecedario; track l) {
+            <button
+              class="key"
+              [disabled]="elegidas.has(l) || gano || perdio"
+              (click)="elegir(l)"
+            >
+              {{ l }}
+            </button>
+            }
+          </div>
+
+          @if (gano) {
+          <p class="notice ok">¡Ganaste! +1 punto</p>
+          } @if (perdio) {
+          <p class="notice error">
+            Perdiste. La palabra era <b>{{ palabra }}</b>
+          </p>
+          }
+
+          <div class="actions">
+            <button class="btn primary" (click)="nuevaPartida()">
+              Nueva partida
+            </button>
+            <p class="muted">Errores: {{ errores }}/{{ maxErrores }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

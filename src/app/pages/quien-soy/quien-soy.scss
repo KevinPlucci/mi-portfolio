@@ -1,46 +1,180 @@
-.about {
-  max-width: 900px;
-  margin: 2rem auto;
-  color: #222;
+@use "sass:color";
 
-  .card {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 1.5rem;
-    background: #fff;
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 8px 30px rgba(0,0,0,.06);
-  }
+/* ===== Tokens ===== */
+$brand: #1c4f9b;
+$brand-700: color.adjust($brand, $lightness: -12%);
+$brand-800: color.adjust($brand, $lightness: -18%);
+$text-on-blue: #334761f5;
+$muted: color.change($text-on-blue, $alpha: .85);
 
-  .photo {
+/* ===== Fondo galáctico SOLO detrás ===== */
+:host {
+  display: block;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+:host::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    linear-gradient(
+      180deg,
+      #{color.change($brand, $alpha: .10)} 0%,
+      #{color.change(#000,  $alpha: .10)} 100%
+    ),
+    url('/assets/img/galaxia.jpeg') center / cover no-repeat;
+  filter: saturate(110%) contrast(105%);
+}
+
+/* ===== Grid 12 para centrar 3-3-6 ===== */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .8rem;
+}
+.home-grid > .about-card { grid-column: 4 / span 6; }
+@media (max-width: 1100px) { .home-grid > .about-card { grid-column: 2 / span 10; } }
+@media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
+
+/* ===== Piel azul SÓLIDA (sin transparencia) ===== */
+$panel-start: color.mix(rgb(30, 71, 158), $brand, 92%);
+$panel-end:   color.mix(rgba(31, 116, 212, 0.616), $brand-700, 92%);
+$head-start:  color.mix(rgba(255, 255, 255, 0.418), $brand, 88%);
+$head-end:    color.mix(white, $brand-800, 88%);
+
+.blue-skin {
+  /* Card principal: opaca */
+  background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
+  border-radius: 16px;
+  /* Importante: sin efecto vidrio y sin transparencia */
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  opacity: 1;
+  color: $text-on-blue;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  padding: 1.25rem;
+
+  /* Bloques de cabecera dentro de la card: también opacos */
+  .header,
+  .profile-header,
+  .resumen,
+  .topband {
+    background: linear-gradient(180deg, $head-start 0%, $head-end 100%);
+    border: 1px solid #{color.change($brand-800, $alpha: .35)};
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
     display: flex;
+    gap: 1rem;
     align-items: center;
-    justify-content: center;
-
-    img {
-      width: 100%;
-      max-width: 220px;
-      aspect-ratio: 1/1;
-      object-fit: cover;
-      border-radius: 14px;
-      border: 3px solid #eee;
-    }
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    opacity: 1;
   }
 
-  .info {
-    h2 { margin: 0 0 .5rem; }
-    h3 { margin: 1rem 0 .25rem; }
-    ul { margin: 0; padding-left: 1rem; }
-    li { margin: .25rem 0; }
+  .avatar, .foto, img.avatar {
+    width: 112px; height: 112px; object-fit: cover; border-radius: 999px;
+    border: 2px solid #{color.change($text-on-blue, $alpha: .6)};
+    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    background: #fff;
   }
 
-  .hint {
-    margin-top: 1rem;
-    font-size: .9rem;
-    color: #555;
-    background: #f9f9f9;
-    padding: .75rem 1rem;
-    border-radius: 10px;
+  h1, h2, h3, h4 {
+    color: $text-on-blue;
+    margin: 0 0 .25rem 0;
+    text-shadow: 0 1px 0 rgba(0,0,0,.12);
   }
+  .subtitle, .subtitulo, .role { color: $muted; font-weight: 600; }
+  .bio, .descripcion { color: color.change($text-on-blue, $alpha: .9); }
+
+  .links a, .social a, a.link {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: color.mix(white, $brand, 95%);
+    border: 1px solid #{color.change($brand-700, $alpha: .6)};
+    color: $text-on-blue;
+    padding: .4rem .7rem; border-radius: 999px; text-decoration: none;
+    transition: transform .15s, background .15s, border-color .15s;
+  }
+  .links a:hover, .social a:hover, a.link:hover {
+    background: color.mix(white, $brand, 93%);
+    border-color: #{color.change($brand-700, $alpha: .9)};
+    transform: translateY(-1px);
+  }
+
+  .chips, .skills-list, .tags { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .chip, .tag, .skill {
+    background: color.mix(white, $brand, 94%);
+    border: 1px solid #{color.change($brand-700, $alpha: .6)};
+    color: $text-on-blue;
+    padding: .35rem .7rem;
+    border-radius: 999px; font-weight: 600;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  }
+
+  .games, .juegos { margin-top: 1rem; }
+  .grid, .cards {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: .8rem;
+  }
+
+  /* Sub-cards de juegos: opacas */
+  .game-card, .card, article.game {
+    grid-column: span 6;
+    background: color.mix(white, $brand, 96%);
+    border: 1px solid #{color.change($brand-700, $alpha: .45)};
+    border-radius: 12px;
+    padding: .9rem 1rem;
+    color: $text-on-blue;
+    transition: transform .15s, background .15s, border-color .15s;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    opacity: 1;
+  }
+  @media (min-width: 1100px) {
+    .game-card, .card, article.game { grid-column: span 4; }
+    .game-card.wide, .card.wide, article.game.wide { grid-column: span 6; }
+  }
+  .game-card:hover, .card:hover, article.game:hover {
+    background: color.mix(white, $brand, 94%);
+    border-color: #{color.change($brand-700, $alpha: .75)};
+    transform: translateY(-2px);
+  }
+  .game-card h4, article.game h4 { margin-bottom: .25rem; }
+  .game-card p, article.game p { color: $muted; }
+
+  .section-title, .titulo-seccion {
+    margin: 1rem 0 .5rem;
+    color: $text-on-blue;
+    border-left: 3px solid #{color.change($brand-700, $alpha: .9)};
+    padding-left: .5rem;
+  }
+
+  .muted { color: $muted; }
+}
+
+/* ===== Salvaguarda anti-reglas viejas (si existiera alguna rgba/opacity) ===== */
+.home-grid > .about-card.blue-skin {
+  background: linear-gradient(180deg, #f3f7fd 0%, #e6eeff 100%) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.home-grid > .about-card.blue-skin .header,
+.home-grid > .about-card.blue-skin .profile-header,
+.home-grid > .about-card.blue-skin .resumen,
+.home-grid > .about-card.blue-skin .topband {
+  background: linear-gradient(180deg, #eaf1ff 0%, #dbe7ff 100%) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+}
+.home-grid > .about-card.blue-skin .game-card,
+.home-grid > .about-card.blue-skin .card,
+.home-grid > .about-card.blue-skin article.game {
+  background: #f7faff !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
 }

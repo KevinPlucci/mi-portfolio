@@ -1,0 +1,43 @@
+<section class="quiz">
+  <h2>Preguntados (Banderas)</h2>
+
+  @if (finished) {
+  <div class="end">
+    <p>Partida terminada. Puntaje: <b>{{ score }}/{{ 10 }}</b></p>
+    <button class="btn" (click)="reset()">Jugar de nuevo</button>
+  </div>
+  } @else {
+  <p class="meta">Ronda {{ round + 1 }} / {{ 10 }}</p>
+
+  @if (loading) {
+  <p>Cargando pregunta…</p>
+  } @else if (q) {
+  <div class="flag">
+    <img [src]="q.imageUrl" alt="Bandera" />
+  </div>
+
+  <div class="options">
+    @for (opt of q.options; track opt) {
+    <button
+      class="opt"
+      [class.correct]="picked && opt === q.correct"
+      [class.wrong]="picked && opt === picked && opt !== q.correct"
+      [disabled]="!!picked"
+      (click)="pick(opt)"
+    >
+      {{ opt }}
+    </button>
+    }
+  </div>
+
+  @if (picked) {
+  <div class="feedback">
+    @if (picked === q.correct) {
+    <p class="ok">¡Correcto!</p>
+    } @else {
+    <p class="err">Incorrecto. Era <b>{{ q.correct }}</b>.</p>
+    }
+    <button class="btn" (click)="nextQuestion()">Siguiente</button>
+  </div>
+  } } }
+</section>

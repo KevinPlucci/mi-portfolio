@@ -1,52 +1,89 @@
 <section class="home">
-  <h2>Bienvenido a mi Porfolio</h2>
-  <p>Componente principal. Accesos a juegos y listados.</p>
+  <!-- Contenedor 12 columnas para centrar 3-3-6 -->
+  <div class="home-grid">
+    <!-- Panel principal igual a Quién Soy -->
+    <div class="about-card blue-skin">
+      <div class="hero">
+        <h1>Bienvenido a mi Porfolio</h1>
+        <p class="subtitle">
+          Componente principal. Accesos a juegos y listados.
+        </p>
 
-  @if (auth.user$ | async; as user) {
-  <div class="session-row">
-    <span class="badge">Sesión: <strong>{{ user.email }}</strong></span>
-    <button
-      type="button"
-      class="btn btn-danger"
-      (click)="logout()"
-      [disabled]="loadingLogout"
-    >
-      Cerrar sesión
-    </button>
-  </div>
+        <div class="session">
+          @if (user$ | async; as user) {
+          <span class="pill info"
+            >Sesión: <strong>{{ user.email }}</strong></span
+          >
+          <button class="btn danger" type="button" (click)="logout()">
+            Cerrar sesión
+          </button>
+          } @else {
+          <span class="pill muted">Sin sesión</span>
+          }
+        </div>
+      </div>
 
-  <div class="grid">
-    <a class="card" routerLink="/juegos" tabindex="0">
-      <h3>Juegos</h3>
-      <p>Ahorcado y Mayor/Menor.</p>
-    </a>
-    <a class="card" routerLink="/listados" tabindex="0">
-      <h3>Listados</h3>
-      <p>Consultas y rankings.</p>
-    </a>
-    <a class="card" routerLink="/chat" tabindex="0">
-      <h3>Chat</h3>
-      <p>Acceso a la sala (solo logueados).</p>
-    </a>
-  </div>
-  } @else {
-  <div class="session-row">
-    <span class="badge muted">Sin sesión</span>
-  </div>
+      <!-- Cards internas -->
+      <div class="cards">
+        <a routerLink="/juegos" class="card">
+          <h3>Juegos</h3>
+          @if (user$ | async) {
+          <p>Ahorcado y Mayor/Menor.</p>
+          } @else {
+          <p class="muted">Logueate para jugar.</p>
+          }
+        </a>
 
-  <div class="grid">
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Juegos</h3>
-      <p>Logueate para jugar.</p>
-    </div>
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Listados</h3>
-      <p>Logueate para ver listados.</p>
-    </div>
-    <div class="card disabled" tabindex="-1" aria-disabled="true">
-      <h3>Chat</h3>
-      <p>Solo usuarios logueados.</p>
+        <a routerLink="/listados" class="card">
+          <h3>Listados</h3>
+          @if (user$ | async) {
+          <p>Consultas y rankings.</p>
+          } @else {
+          <p class="muted">Logueate para ver listados.</p>
+          }
+        </a>
+
+        <a routerLink="/chat" class="card">
+          <h3>Chat</h3>
+          @if (user$ | async) {
+          <p>Acceso a la sala (solo logueados).</p>
+          } @else {
+          <p class="muted">Solo usuarios logueados.</p>
+          }
+        </a>
+
+        <a routerLink="/preguntados" class="card">
+          <h3>Preguntados</h3>
+          @if (user$ | async) {
+          <p>¿De qué país es la bandera?</p>
+          } @else {
+          <p class="muted">Logueate para jugar.</p>
+          }
+        </a>
+
+        <a routerLink="/mi-juego" class="card">
+          <h3>Secuencias</h3>
+          @if (user$ | async) {
+          <p>Calculá el siguiente número</p>
+          } @else {
+          <p class="muted">Logueate para jugar.</p>
+          }
+        </a>
+
+        <a routerLink="/encuesta" class="card">
+          <h3>Encuesta</h3>
+          @if (user$ | async) {
+          <p>3 preguntas con validaciones</p>
+          } @else {
+          <p class="muted">Logueate para completar la encuesta.</p>
+          }
+        </a>
+
+        <a routerLink="/quien-soy" class="card">
+          <h3>Quién Soy</h3>
+          <p>Datos del alumno y juegos</p>
+        </a>
+      </div>
     </div>
   </div>
-  }
 </section>

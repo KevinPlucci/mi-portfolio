@@ -1,46 +1,68 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth.service';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Auth, createUserWithEmailAndPassword } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], // 👈 AQUI
   templateUrl: './registro.html',
   styleUrls: ['./registro.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RegistroComponent {
-  private auth = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private auth = inject(Auth);
   private router = inject(Router);
 
-  email = '';
-  password = '';
   loading = false;
-  error = '';
-  success = '';
+  error: string | null = null;
+  ok = false;
 
-  async register() {
-    this.error = '';
-    this.success = '';
-    this.loading = true;
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+  });
+
+  async submit() {
+    this.error = null;
+    this.ok = false;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const { email, password } = this.form.value as {
+      email: string;
+      password: string;
+    };
+
     try {
-      await this.auth.register(this.email, this.password);
-      // createUser deja al usuario autenticado → redirige a Home
-      this.success = 'Usuario creado con éxito. Redirigiendo...';
-      this.router.navigateByUrl('/home');
+      this.loading = true;
+      await createUserWithEmailAndPassword(this.auth, email, password);
+      this.ok = true;
+      await this.router.navigateByUrl('/home'); // auto-login + redirección
     } catch (e: any) {
       this.error =
-        e?.code === 'auth/email-already-in-use'
-          ? 'El usuario ya se encuentra registrado.'
-          : e?.code === 'auth/invalid-email'
-          ? 'El email no es válido.'
-          : e?.code === 'auth/weak-password'
-          ? 'La contraseña es demasiado débil.'
-          : 'No se pudo registrar el usuario.';
+        this.mapAuthError(e?.code) ?? (e?.message || 'No se pudo registrar');
+      console.error(e);
     } finally {
       this.loading = false;
+    }
+  }
+
+  private mapAuthError(code?: string): string | null {
+    switch (code) {
+      case 'auth/email-already-in-use':
+        return 'El usuario ya está registrado';
+      case 'auth/invalid-email':
+        return 'Email inválido';
+      case 'auth/weak-password':
+        return 'La contraseña es demasiado débil';
+      default:
+        return null;
     }
   }
 }

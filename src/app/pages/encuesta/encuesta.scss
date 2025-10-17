@@ -1,0 +1,11 @@
+.encuesta { max-width: 900px; margin: 0 auto; padding: 1rem; }
+form { background: #0f0f0f; color: #eee; border: 1px solid #222; border-radius: 12px; padding: 1rem; }
+.row { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: .8rem; }
+label { display: flex; flex-direction: column; gap: .3rem; }
+input, textarea { width: 100%; background: #151515; color: #eee; border: 1px solid #2a2a2a; border-radius: 8px; padding: .55rem .7rem; }
+fieldset { border: 1px solid #2a2a2a; border-radius: 8px; padding: .6rem .8rem; }
+legend { padding: 0 .3rem; opacity: .9; }
+.errors p { color: #f85149; margin: .4rem 0 0; }
+button { margin-top: .8rem; padding: .55rem 1rem; background: #2f6fed; border: none; border-radius: 8px; color: #fff; }
+.ok { color: #7ee787; margin-top: .5rem; }
+.err { color: #f85149; margin-top: .5rem; }

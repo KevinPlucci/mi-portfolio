@@ -1,0 +1,88 @@
+<section class="encuesta">
+  <h2>Encuesta</h2>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="row">
+      <label
+        >Nombre y apellido
+        <input type="text" formControlName="nombre" />
+      </label>
+      <label
+        >Edad
+        <input type="number" formControlName="edad" />
+      </label>
+      <label
+        >Teléfono
+        <input type="text" formControlName="telefono" />
+      </label>
+    </div>
+
+    <div class="row">
+      <fieldset>
+        <legend>Satisfacción (1-5)</legend>
+        <label
+          ><input type="radio" formControlName="satisfaccion" value="1" />
+          1</label
+        >
+        <label
+          ><input type="radio" formControlName="satisfaccion" value="2" />
+          2</label
+        >
+        <label
+          ><input type="radio" formControlName="satisfaccion" value="3" />
+          3</label
+        >
+        <label
+          ><input type="radio" formControlName="satisfaccion" value="4" />
+          4</label
+        >
+        <label
+          ><input type="radio" formControlName="satisfaccion" value="5" />
+          5</label
+        >
+      </fieldset>
+
+      <!-- 👇 ahora pasa un FormGroup tipado, sin error TS2740 -->
+      <fieldset [formGroup]="jugadosGroup">
+        <legend>¿Qué juegos jugaste? (al menos uno)</legend>
+        <label
+          ><input type="checkbox" formControlName="ahorcado" /> Ahorcado</label
+        >
+        <label
+          ><input type="checkbox" formControlName="mayorMenor" /> Mayor o
+          Menor</label
+        >
+        <label
+          ><input type="checkbox" formControlName="preguntados" />
+          Preguntados</label
+        >
+        <label
+          ><input type="checkbox" formControlName="secuencias" />
+          Secuencias</label
+        >
+      </fieldset>
+    </div>
+
+    <label
+      >Comentario
+      <textarea rows="4" formControlName="comentario"></textarea>
+    </label>
+
+    <div class="errors">
+      @if (form.touched && form.hasError('atLeastOne')) {
+      <p>Seleccioná al menos un juego.</p>
+      } @if (ctrl('edad').touched && ctrl('edad').invalid) {
+      <p>La edad debe ser entre 18 y 98.</p>
+      } @if (ctrl('telefono').touched && ctrl('telefono').invalid) {
+      <p>Teléfono: solo números, máximo 10 dígitos.</p>
+      }
+    </div>
+
+    <button type="submit" [disabled]="saving || form.invalid">Enviar</button>
+    @if (ok) {
+    <p class="ok">¡Gracias por responder!</p>
+    } @if (err) {
+    <p class="err">{{ err }}</p>
+    }
+  </form>
+</section>

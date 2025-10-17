@@ -1,12 +1,33 @@
+// src/app/core/auth.guard.ts
 import { inject } from '@angular/core';
-import { CanMatchFn, Router } from '@angular/router';
+import { Router, CanMatchFn, CanActivateFn } from '@angular/router';
 import { Auth, authState } from '@angular/fire/auth';
-import { firstValueFrom } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 
-/** Permite ruta solo si hay sesión; si no, redirige a /login */
-export const authGuard: CanMatchFn = async () => {
-  const auth = inject(Auth);
+/**
+ * Guard de autenticación para rutas protegidas usando `canMatch`.
+ * Si no hay usuario logueado, redirige a /login.
+ */
+export const authGuard: CanMatchFn = () => {
   const router = inject(Router);
-  const user = await firstValueFrom(authState(auth));
-  return user ? true : router.createUrlTree(['/login']);
+  const auth = inject(Auth);
+
+  return authState(auth).pipe(
+    take(1),
+    map((user) => (user ? true : router.createUrlTree(['/login'])))
+  );
+};
+
+/**
+ * (Opcional) Versión equivalente para usar con `canActivate`.
+ * Útil si alguna ruta prefiere canActivate en lugar de canMatch.
+ */
+export const authActivateGuard: CanActivateFn = () => {
+  const router = inject(Router);
+  const auth = inject(Auth);
+
+  return authState(auth).pipe(
+    take(1),
+    map((user) => (user ? true : router.createUrlTree(['/login'])))
+  );
 };

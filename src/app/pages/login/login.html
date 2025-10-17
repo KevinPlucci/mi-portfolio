@@ -1,46 +1,53 @@
-<section class="login">
-  <div class="card">
-    <h1>Iniciar sesión</h1>
+<!-- Grid de 12 para centrar la card como en Quién Soy -->
+<div class="home-grid">
+  <section class="auth blue-skin">
+    <h2>Ingresar</h2>
 
-    <form (ngSubmit)="login()" novalidate>
-      <label for="email">Email</label>
-      <input id="email" type="email" [(ngModel)]="email" name="email" />
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label class="field">
+        <span>Email</span>
+        <input
+          type="email"
+          formControlName="email"
+          inputmode="email"
+          autocomplete="email"
+        />
+      </label>
 
-      <label for="password">Contraseña</label>
-      <input
-        id="password"
-        type="password"
-        [(ngModel)]="password"
-        name="password"
-      />
+      <label class="field">
+        <span>Contraseña</span>
+        <input
+          type="password"
+          formControlName="password"
+          autocomplete="current-password"
+        />
+      </label>
+
+      @if (error) {
+      <div class="notice error">{{ error }}</div>
+      }
 
       <div class="actions">
-        <button type="submit" class="btn btn-primary" [disabled]="loading">
-          Entrar
+        <button
+          class="btn primary"
+          type="submit"
+          [disabled]="loading || form.invalid"
+        >
+          @if (loading) { <span class="spinner" aria-hidden="true"></span> }
+          Ingresar
         </button>
+        <a routerLink="/registro" class="btn ghost">Crear cuenta</a>
       </div>
     </form>
 
-    <div class="quick-actions">
-      <!-- Si los tenías con disabled, podés sacarlo ahora. Igual los estilos de disabled ya contrastan. -->
-      <button
-        type="button"
-        class="btn btn-secondary"
-        (click)="usarDemo()"
-        [disabled]="loading"
-      >
-        Demo alumno
+    <div class="quick">
+      <p>Accesos rápidos (autocompletan):</p>
+      <button class="chip" type="button" (click)="quickFill('alumno')">
+        Alumno
       </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        (click)="usarInvitado()"
-        [disabled]="loading"
-      >
+      <button class="chip" type="button" (click)="quickFill('invitado')">
         Invitado
       </button>
     </div>
-
-    <p class="error" *ngIf="error">{{ error }}</p>
-  </div>
-</section>
+  </section>
+</div>

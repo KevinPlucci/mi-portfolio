@@ -1,60 +1,78 @@
-import { Component, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../core/auth.service';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { Auth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { LogService } from '../../core/log.service';
 import { environment } from '../../../environments/environment';
+
+type DemoKey = keyof typeof environment.demoUsers;
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink], // 👈 AQUI
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent {
-  form: any;
-  onSubmit() {
-    throw new Error('Method not implemented.');
-  }
-  usarInvitado() {
-    this.accesoInvitado();
-  }
-  usarDemo() {
-    this.accesoDemo();
-  }
-  private auth = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private auth = inject(Auth);
   private router = inject(Router);
+  private logger = inject(LogService);
 
-  email = '';
-  password = '';
   loading = false;
-  error = '';
+  error: string | null = null;
 
-  async login() {
-    this.loading = true;
-    this.error = '';
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]],
+  });
+
+  async submit() {
+    this.error = null;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    const { email, password } = this.form.value as {
+      email: string;
+      password: string;
+    };
+
     try {
-      await this.auth.login(this.email, this.password);
-      this.router.navigateByUrl('/home');
+      this.loading = true;
+      const cred = await signInWithEmailAndPassword(this.auth, email, password);
+      await this.logger.logLoginSuccess(cred.user);
+      await this.router.navigateByUrl('/home');
     } catch (e: any) {
-      this.error = e?.message ?? 'Error al iniciar sesión';
+      this.error =
+        this.mapAuthError(e?.code) ??
+        (e?.message || 'No se pudo iniciar sesión');
+      console.error(e);
     } finally {
       this.loading = false;
     }
   }
 
-  accesoDemo() {
-    const { demo } = environment.demoUsers;
-    this.email = demo.email;
-    this.password = demo.password;
-    this.login();
+  quickFill(kind: DemoKey) {
+    const creds = environment.demoUsers[kind];
+    this.form.patchValue({ email: creds.email, password: creds.password });
   }
 
-  accesoInvitado() {
-    const { invitado } = environment.demoUsers;
-    this.email = invitado.email;
-    this.password = invitado.password;
-    this.login();
+  private mapAuthError(code?: string): string | null {
+    switch (code) {
+      case 'auth/invalid-email':
+        return 'Email inválido';
+      case 'auth/user-not-found':
+        return 'Usuario no encontrado';
+      case 'auth/wrong-password':
+        return 'Contraseña incorrecta';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos, probá más tarde';
+      default:
+        return null;
+    }
   }
 }

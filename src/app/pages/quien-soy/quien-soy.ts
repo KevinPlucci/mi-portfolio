@@ -1,19 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-type Juego = {
-  titulo: string;
-  descripcion: string;
-};
-
-type Alumno = {
-  nombre: string;
-  legajo: string;
-  curso: string;
-  email: string;
-  imagenUrl: string; // 👈 usaremos /assets/...
-  juego: Juego;
-};
 
 @Component({
   selector: 'app-quien-soy',
@@ -21,19 +7,40 @@ type Alumno = {
   imports: [CommonModule],
   templateUrl: './quien-soy.html',
   styleUrls: ['./quien-soy.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QuienSoyComponent {
-  // Ajustá los datos a gusto. Lo clave es imagenUrl ↓
-  alumno: Alumno = {
-    nombre: 'Kevin Martín Plucci',
-    legajo: '110646',
-    curso: 'Laboratorio 4',
-    email: 'pluccikevin7@ejemplo.com',
-    imagenUrl: 'assets/img/alumno.jpg',
-    juego: {
-      titulo: 'Mi juego propio',
-      descripcion:
-        'Breve explicación del juego: tecnología usada, objetivo, qué lo hace único, etc.',
+  nombre = 'Kevin Plucci';
+  rol = 'Analista / Desarrollador';
+  descripcion = `
+    Portfolio hecho con Angular standalone y Firebase. Incluye un chat en tiempo real y varios juegos:
+    Ahorcado, Mayor o Menor, Preguntados (banderas) y un juego propio de Secuencias numéricas.
+  `;
+  imagenUrl = 'assets/img/alumno.jpg';
+  skills = ['Angular', 'TypeScript', 'Firebase', 'SCSS', 'Flutter', 'DFD/DER'];
+  juegos = [
+    {
+      titulo: 'Ahorcado',
+      texto:
+        'Adiviná la palabra antes de completar el cuerpo. +1 por victoria.',
     },
-  };
+    {
+      titulo: 'Mayor o Menor',
+      texto: 'Pronosticá la siguiente carta. Sumás por acierto.',
+    },
+    {
+      titulo: 'Preguntados',
+      texto:
+        'Identificá el país según su bandera. Opciones múltiples, imágenes desde API.',
+    },
+    {
+      titulo: 'Secuencias',
+      texto:
+        'Dada una serie aritmética, elegí el siguiente número correcto entre 4 opciones.',
+    },
+  ];
+  links = [
+    { label: 'GitHub', url: 'https://github.com/KevinPlucci' },
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/kevinplucci/' },
+  ];
 }

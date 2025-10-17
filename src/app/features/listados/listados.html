@@ -1,28 +1,59 @@
-<section class="ranking">
-  <div class="card">
-    <h2>Listados</h2>
+<section class="listados">
+  <h2>Ranking</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Email</th>
+        <th>Puntos</th>
+        <th>Última vez</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (it of ranking$ | async; track it.id; let i = $index) {
+      <tr>
+        <td>{{ i + 1 }}</td>
+        <td>{{ it.email || it.uid }}</td>
+        <td>{{ it.puntos || 0 }}</td>
+        <td>
+          @if (it.updatedAt?.toDate) { {{ it.updatedAt.toDate() | date:'short'
+          }} }
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="4" class="empty">No hay puntajes aún</td>
+      </tr>
+      }
+    </tbody>
+  </table>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Usuario</th>
-          <th>Puntos</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (r of top$ | async; track r.id; let i = $index) {
-        <tr>
-          <td>{{ i + 1 }}</td>
-          <td>{{ r.email || r.uid }}</td>
-          <td class="num">{{ r.puntos }}</td>
-        </tr>
-        } @empty {
-        <tr>
-          <td colspan="3">Sin datos por ahora.</td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+  <h2 class="mt">Resultados recientes</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Juego</th>
+        <th>Email</th>
+        <th>Puntaje</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (r of resultados$ | async; track r.id) {
+      <tr>
+        <td>
+          @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() | date:'short' }}
+          }
+        </td>
+        <td>{{ r.juego }}</td>
+        <td>{{ r.email || r.uid }}</td>
+        <td>{{ r.puntos }}</td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="4" class="empty">Sin partidas registradas</td>
+      </tr>
+      }
+    </tbody>
+  </table>
 </section>

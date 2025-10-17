@@ -1,0 +1,39 @@
+<section class="seq">
+  <h2>Secuencias</h2>
+
+  @if (finished) {
+  <div class="end">
+    <p>Partida terminada. Puntaje: <b>{{ score }}/{{ 10 }}</b></p>
+    <button class="btn" (click)="reset()">Jugar de nuevo</button>
+  </div>
+  } @else if (r) {
+  <p class="meta">Ronda {{ round + 1 }} / {{ 10 }}</p>
+  <div class="series">
+    <span>@for (n of r.series; track n) { {{ n }} } … ?</span>
+  </div>
+
+  <div class="options">
+    @for (opt of r.options; track opt) {
+    <button
+      class="opt"
+      [class.correct]="picked !== undefined && opt === r.correct"
+      [class.wrong]="picked !== undefined && opt === picked && opt !== r.correct"
+      [disabled]="picked !== undefined"
+      (click)="pick(opt)"
+    >
+      {{ opt }}
+    </button>
+    }
+  </div>
+
+  @if (picked !== undefined) {
+  <div class="feedback">
+    @if (picked === r.correct) {
+    <p class="ok">¡Correcto!</p>
+    } @else {
+    <p class="err">Incorrecto. Era <b>{{ r.correct }}</b>.</p>
+    }
+    <button class="btn" (click)="next()">Siguiente</button>
+  </div>
+  } }
+</section>

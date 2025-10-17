@@ -1,79 +1,113 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RankingService } from '../../../core/ranking.service';
+import { ResultsService } from '../../../core/results.service';
 
-type Card = { value: number; display: string };
+type Suit = '♠' | '♥' | '♦' | '♣';
+type Card = { value: number; suit: Suit };
 
 @Component({
   selector: 'app-mayor-menor',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './mayor-menor.html',
   styleUrls: ['./mayor-menor.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MayorMenorComponent implements OnInit {
+  private ranking = inject(RankingService);
+  private results = inject(ResultsService);
+
   deck: Card[] = [];
-  current!: Card;
+  current?: Card;
+  next?: Card;
+
   score = 0;
+  rounds = 0;
   finished = false;
+
+  /** Alias para compatibilidad con la plantilla antigua */
+  get guesses(): number {
+    return this.rounds;
+  }
 
   ngOnInit(): void {
     this.reset();
   }
 
+  /** Reinicia el mazo y el estado */
   reset(): void {
-    // Generar mazo (4 palos x 13 valores)
-    const values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
-    const toDisp = (v: number) =>
-      v === 1
-        ? 'A'
-        : v === 11
-        ? 'J'
-        : v === 12
-        ? 'Q'
-        : v === 13
-        ? 'K'
-        : String(v);
-
-    const cards: Card[] = [];
-    for (let s = 0; s < 4; s++) {
-      values.forEach((v) => cards.push({ value: v, display: toDisp(v) }));
-    }
-
-    this.deck = this.shuffle(cards);
+    this.deck = this.createShuffledDeck();
     this.score = 0;
+    this.rounds = 0;
     this.finished = false;
-    this.current = this.deck.shift()!; // primera carta visible
+    this.current = this.deck.pop();
+    this.next = undefined;
   }
 
-  private shuffle<T>(arr: T[]): T[] {
-    const a = [...arr];
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
+  /** Acceso compatible: la plantilla puede llamar guess('mayor'|'menor') */
   guess(kind: 'mayor' | 'menor'): void {
-    if (this.finished) return;
+    this.play(kind);
+  }
 
-    const next = this.deck.shift();
-    if (!next) {
-      this.finished = true;
+  /** Lógica del juego */
+  private play(kind: 'mayor' | 'menor'): void {
+    if (this.finished || !this.current) return;
+
+    this.next = this.deck.pop();
+    if (!this.next) {
+      this.endGame();
       return;
     }
 
-    // Regla: acierta si la "siguiente" es >= (mayor) o <= (menor) a la actual.
-    const ok =
-      kind === 'mayor'
-        ? next.value >= this.current.value
-        : next.value <= this.current.value;
-
+    const cmp = this.compare(this.next.value, this.current.value);
+    const ok = (kind === 'mayor' && cmp > 0) || (kind === 'menor' && cmp < 0);
     if (ok) this.score++;
+    this.rounds++;
 
-    // Revelamos la carta y pasa a ser la "actual"
-    this.current = next;
+    // Avanza
+    this.current = this.next;
+    this.next = undefined;
 
-    if (this.deck.length === 0) this.finished = true;
+    if (this.deck.length === 0) this.endGame();
+  }
+
+  /** Fin de la partida: guarda resultado y ranking */
+  private async endGame(): Promise<void> {
+    this.finished = true;
+    await Promise.all([
+      this.results.save('mayor-menor', this.score, { rounds: this.rounds }),
+      this.ranking.addPoints(this.score),
+    ]);
+  }
+
+  /** Helpers */
+  label(c?: Card): string {
+    if (!c) return '';
+    const map: Record<number, string> = { 1: 'A', 11: 'J', 12: 'Q', 13: 'K' };
+    const v = map[c.value] ?? String(c.value);
+    return `${v}${c.suit}`;
+  }
+
+  private compare(a: number, b: number): number {
+    return a === b ? 0 : a > b ? 1 : -1;
+  }
+
+  private createShuffledDeck(): Card[] {
+    const suits: Suit[] = ['♠', '♥', '♦', '♣'];
+    const deck: Card[] = [];
+    for (const s of suits)
+      for (let v = 1; v <= 13; v++) deck.push({ value: v, suit: s });
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
   }
 }

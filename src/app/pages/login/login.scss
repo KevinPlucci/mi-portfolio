@@ -1,169 +1,154 @@
+@use "sass:color";
+
+/* ===== Tokens (mismos azules del sitio) ===== */
+$brand: #1c58b3;
+$brand-700: color.adjust($brand, $lightness: -12%);
+$brand-800: color.adjust($brand, $lightness: -18%);
+$text-on-blue: #334761f5;
+$muted: color.change($text-on-blue, $alpha: .85);
+
+/* ===== Fondo galáctico en todo el viewport del Login (solo atrás) ===== */
 :host {
-  /* Azul compatible con tu topbar; ajusta si usás otro tono */
-  --primary: #1976d2;
-  --primary-600: #1565c0;
-  --primary-700: #0d47a1;
-  --ring: rgba(25, 118, 210, 0.35);
-
-  --text-on-primary: #ffffff;
-  --card-bg: #ffffff;
-  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --input-bg: #ffffff;
+  display: block;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+:host::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    /* overlay MUY suave para uniformar tonos, no toca la card */
+    linear-gradient(
+      180deg,
+      #{color.change($brand, $alpha: .10)} 0%,
+      #{color.change(#000,  $alpha: .10)} 100%
+    ),
+    url('/assets/img/galaxia.jpeg') center / cover no-repeat;
+  filter: saturate(110%) contrast(105%);
 }
 
-.login {
+/* ===== Grid para centrar la card 3-3-6 ===== */
+.home-grid {
   display: grid;
-  place-items: center;
-  padding: 48px 16px;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: .8rem;
 }
+.home-grid > .auth {
+  grid-column: 4 / span 6;
+  max-width: 640px;
+  justify-self: center;
+}
+@media (max-width: 1100px) { .home-grid > .auth { grid-column: 2 / span 10; } }
+@media (max-width: 720px)  { .home-grid > .auth { grid-column: 1 / -1; } }
 
-.card {
-  width: 100%;
-  max-width: 520px;
-  background: var(--card-bg);
+/* ===== Piel azul SÓLIDA (opaca, no deja ver la galaxia) ===== */
+$panel-start: color.mix(white, $brand, 92%);     // 92% blanco, 8% brand
+$panel-end:   color.mix(white, $brand-700, 92%);
+$head-start:  color.mix(white, $brand, 88%);
+$head-end:    color.mix(white, $brand-800, 88%);
+
+.blue-skin {
+  background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
   border-radius: 16px;
-  box-shadow: var(--card-shadow);
-  padding: 28px 28px 22px;
-
-  h1 {
-    margin: 0 0 18px;
-    font-size: 28px;
-    font-weight: 700;
-    color: #111827;
-  }
-
-  form {
-    display: grid;
-    gap: 10px;
-
-    label {
-      font-size: 14px;
-      color: #111827;
-      margin-top: 6px;
-    }
-
-    input {
-      appearance: none;
-      width: 100%;
-      height: 40px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--input-bg);
-      padding: 0 12px;
-      font-size: 16px;
-      outline: none;
-
-      &:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px var(--ring);
-      }
-    }
-
-    .actions {
-      margin-top: 10px;
-      display: flex;
-      gap: 10px;
-    }
-  }
-
-  .quick-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 16px;
-    flex-wrap: wrap;
-  }
-
-  .error {
-    margin-top: 14px;
-    color: #b91c1c;
-    font-size: 14px;
-  }
+  /* el blur ya no es necesario (sin transparencia), lo dejo suave por brillo sutil */
+  backdrop-filter: saturate(120%) blur(1px);
+  color: $text-on-blue;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  padding: 1.25rem 1.25rem 1.5rem;
 }
 
-/* ========= Botones ========= */
+/* ===== Tipografía ===== */
+.auth h2 {
+  margin: 0 0 .75rem 0;
+  color: $text-on-blue;
+  text-shadow: 0 1px 0 rgba(0,0,0,.12);
+}
 
-.btn {
-  appearance: none;
-  user-select: none;
-  cursor: pointer;
-  border: 0;
+/* ===== Campos ===== */
+.field { display: grid; gap: .35rem; margin-bottom: .9rem; }
+.field > span { color: $muted; font-weight: 600; }
+
+input {
+  width: 100%;
+  padding: .65rem .8rem;
   border-radius: 12px;
-  padding: 10px 16px;
-  font-weight: 600;
-  line-height: 1;
-  transition: transform 0.05s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  &:active {
-    transform: translateY(1px);
-  }
-
-  &:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 4px var(--ring);
-  }
-
-  &[disabled] {
-    cursor: not-allowed;
-    opacity: 0.85; /* que se sigan viendo */
-  }
+  background: color.mix(white, $brand, 96%);              // sólido claro
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
+  color: $text-on-blue;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+input::placeholder { color: color.change($text-on-blue, $alpha: .60); }
+input:focus {
+  outline: none;
+  border-color: #{color.change($brand-700, $alpha: .85)};
+  background: color.mix(white, $brand, 94%);
+  box-shadow:
+    0 0 0 3px #{color.change($brand, $alpha: .18)},
+    inset 0 1px 0 rgba(255,255,255,.06);
 }
 
-/* Botón principal: azul sólido, buen contraste */
-.btn-primary {
-  background: var(--primary);
-  color: var(--text-on-primary);
-  box-shadow: 0 6px 16px rgba(25, 118, 210, 0.25);
+/* ===== Botones ===== */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .6rem 1rem; border-radius: 999px; font-weight: 600;
+  text-decoration: none; cursor: pointer; user-select: none;
+  transition: transform .12s, background .12s, border-color .12s, box-shadow .12s;
+}
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: .6; cursor: not-allowed; }
 
-  &:hover:not([disabled]) {
-    background: var(--primary-600);
-    box-shadow: 0 8px 18px rgba(25, 118, 210, 0.35);
-  }
-
-  &:active:not([disabled]) {
-    background: var(--primary-700);
-  }
+.btn.primary {
+  color: white;
+  background: linear-gradient(
+    180deg,
+    #{color.change($brand, $alpha: .95)} 0%,
+    #{color.change($brand-700, $alpha: .95)} 100%
+  );
+  border: 1px solid #{color.change($brand-800, $alpha: .9)};
+  box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn.primary:hover:not([disabled]) {
+  box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
 }
 
-/* Secundarios (Demo/Invitado): “outline” azul, legibles sobre fondo blanco */
-.btn-secondary {
-  background: #eef5fe; /* leve azul para que no se pierdan */
-  color: var(--primary);
-  border: 2px solid var(--primary);
-
-  &:hover:not([disabled]) {
-    background: var(--primary);
-    color: var(--text-on-primary);
-  }
-
-  &:active:not([disabled]) {
-    background: var(--primary-600);
-    color: var(--text-on-primary);
-  }
-
-  &[disabled] {
-    background: #f2f6fb;
-    border-color: #9ab9e8;
-    color: #5f89c6;
-  }
+.btn.ghost {
+  background: color.mix(white, $brand, 96%);
+  border: 1px solid #{color.change($brand-700, $alpha: .6)};
+  color: $text-on-blue;
+}
+.btn.ghost:hover {
+  background: color.mix(white, $brand, 94%);
+  border-color: #{color.change($brand-700, $alpha: .9)};
 }
 
-/* Responsive pequeño */
-@media (max-width: 420px) {
-  .card {
-    padding: 22px 18px;
-  }
-  .btn {
-    width: 100%;
-  }
-  .card .actions {
-    flex-direction: column;
-  }
-  .card .quick-actions {
-    flex-direction: column;
-  }
+/* Acciones */
+.actions { display: flex; gap: .6rem; align-items: center; margin-top: .2rem; }
+
+/* Spinner */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.65);
+  border-top-color: transparent; border-radius: 50%;
+  animation: spin .6s linear infinite; margin-right: .25rem;
 }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.notice { margin: .25rem 0 .6rem; padding: .55rem .75rem; border-radius: 10px; border: 1px solid transparent; font-weight: 600; }
+.notice.error { background: color.change(#f85149, $alpha: .12); border-color: color.change(#f85149, $alpha: .6); color: #f85149; }
+
+/* Chips de accesos rápidos */
+.quick { margin-top: 1rem; display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; color: $muted; }
+.chip {
+  background: color.mix(white, $brand, 94%);
+  border: 1px solid #{color.change($brand-700, $alpha: .6)};
+  color: $text-on-blue;
+  padding: .35rem .7rem; border-radius: 999px; font-weight: 600;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.chip:hover { background: color.mix(white, $brand, 92%); border-color: #{color.change($brand-700, $alpha: .85)}; }
