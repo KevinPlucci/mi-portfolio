@@ -1,7 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { Auth, authState } from '@angular/fire/auth';
-import { Firestore, addDoc, collection } from '@angular/fire/firestore';
-import { serverTimestamp } from 'firebase/firestore';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  serverTimestamp, // <--- CAMBIO: Importado desde @angular/fire
+} from '@angular/fire/firestore';
 import { firstValueFrom } from 'rxjs';
 import { take } from 'rxjs/operators';
 

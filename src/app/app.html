@@ -1,21 +1,34 @@
 <nav class="topbar">
-  <div class="wrap">
-    <div class="links">
-      <a
-        routerLink="/home"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Home</a
-      >
+  <!--
+    Usamos el mismo 'home-grid' de 12 columnas que usan
+    tus páginas (Home, Quien Soy, etc.) para que el contenido
+    de la navbar se alinee con las cards de abajo.
+  -->
+  <div class="wrap home-grid">
+    <!-- Brand + Nav Links (Left side) -->
+    <div class="nav-left">
+      <a routerLink="/home" class="brand">
+        <span>MiPorfolio</span>
+      </a>
+      <div class="nav-links">
+        <!-- Link 'Home' eliminado por redundancia -->
+        <a routerLink="/quien-soy" routerLinkActive="active">Quién Soy</a>
+      </div>
+    </div>
 
-      <a routerLink="/quien-soy" routerLinkActive="active">Quién Soy</a>
-
+    <!-- Auth controls (Right side) -->
+    <div class="auth-controls">
       @if (auth.user$ | async; as user) {
-      <span class="user">Hola, {{ user.email }}</span>
-      <button class="btn" (click)="logout()">Cerrar sesión</button>
+      <!-- Admin Badge -->
+      @if(auth.isAdmin$ | async){
+      <span class="pill admin">ADMIN</span>
+      }
+      <!-- Estilo de 'pill' aplicado al saludo -->
+      <span class="user-greeting pill info">{{ user.email }}</span>
+      <button class="btn btn-logout" (click)="logout()">Cerrar sesión</button>
       } @else {
-      <a routerLink="/login" routerLinkActive="active">Login</a>
-      <a routerLink="/registro" routerLinkActive="active">Registro</a>
+      <a routerLink="/login" class="btn btn-secondary">Login</a>
+      <a routerLink="/registro" class="btn btn-primary">Registro</a>
       }
     </div>
   </div>

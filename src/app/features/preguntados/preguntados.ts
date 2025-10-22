@@ -6,6 +6,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PreguntadosService, Question } from './preguntados.service';
+// Inyectamos los servicios para guardar el puntaje
+import { RankingService } from '../../core/ranking.service';
+import { ResultsService } from '../../core/results.service';
 
 const ROUNDS = 10;
 
@@ -19,6 +22,9 @@ const ROUNDS = 10;
 })
 export class PreguntadosComponent {
   private api = inject(PreguntadosService);
+  // Inyectamos los servicios
+  private ranking = inject(RankingService);
+  private results = inject(ResultsService);
 
   loading = signal(true);
   round = signal(0);
@@ -35,6 +41,19 @@ export class PreguntadosComponent {
   async nextQuestion(first = false) {
     if (!first && this.round() >= ROUNDS - 1) {
       this.finished.set(true);
+
+      // --- ¡LÓGICA AÑADIDA! ---
+      // Guardamos el puntaje al finalizar la partida
+      try {
+        await Promise.all([
+          this.ranking.addPoints(this.score()),
+          this.results.save('preguntados', this.score(), { rounds: ROUNDS }),
+        ]);
+      } catch (e) {
+        console.error('Error al guardar el puntaje:', e);
+      }
+      // --- FIN DE LA LÓGICA AÑADIDA ---
+
       return;
     }
 

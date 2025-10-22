@@ -1,54 +1,228 @@
 /* ===== Paleta igual a tus capturas ===== */
-$blue: #0a76c7;         // barra superior
-$blue-hover: #0963a5;   // hover
+$blue: #0a76c7;
+$blue-dark: #0963a5; // Tono de hover que ya tenías
 $white: #fff;
-$gray-100: #f1f1f1;     // footer
+$gray-100: #f1f1f1;
 $text: #111;
+
+// --- Adiciones para el look moderno ---
+$blue-gradient-start: #0e84da;
+$blue-gradient-end: #0a76c7;
+$text-light: #f8f9fa;
+$text-muted: #e9ecef;
 
 /* Layout base */
 :host { display: block; color: $text; }
-.page { padding: 24px 16px; }
+.page {
+  padding: 24px 16px;
+  /* Añadimos padding-top para dejar espacio a la navbar fija */
+  padding-top: calc(4rem + 24px);
+}
 
 /* ----- NAVBAR ----- */
 .topbar {
-  position: sticky; top: 0; z-index: 1000;
-  background: $blue;
-  border-bottom: 1px solid rgba(0,0,0,.08);
+  position: fixed; /* Fija en la parte superior */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: linear-gradient(90deg, $blue-gradient-start 0%, $blue-gradient-end 100%);
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .1);
+  height: 4rem; /* 64px */
 }
 
+/* Wrap ahora usa el grid de 12 columnas para alinearse
+  con el contenido de las páginas (home.scss, quien-soy.scss)
+*/
 .wrap {
-  max-width: 1200px; margin: 0 auto; padding: 12px 20px;
-  display: flex; align-items: center; gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .8rem;
+  align-items: center;
+  height: 100%;
+  padding: 0 1.5rem;
 }
 
-/* Links como en tu captura: blancos y separados */
-.brand, .links a, .user { color: $white; }
-.brand { font-weight: 700; text-decoration: none; }
+/* Nav Left (Brand + Links): Alineado al inicio de la card (col 4-9) */
+.nav-left {
+  grid-column: 4 / span 6;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Espacio entre MiPorfolio y Quién Soy */
+}
 
-.links { display: flex; align-items: center; gap: 24px; }
-.links a {
-  text-decoration: none; padding: 6px 0; border-radius: 6px;
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+  color: $white;
+  text-decoration: none;
+  opacity: 0.9;
+  transition: opacity .15s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+/* Main Nav Links: Centrados en la card (col 7-9) */
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Centra los links */
+  gap: 1.5rem; /* Más espacio entre links */
+}
+
+.nav-links a {
+  font-size: 0.95rem; /* ~15px */
+  font-weight: 600;
+  color: $text-muted;
+  text-decoration: none;
+  padding: 0.5rem 1rem; /* 8px 16px */
+  border-radius: 8px;
   transition: background .15s ease, color .15s ease;
-}
-.links a:hover { background: $blue-hover; }
 
-/* Estado activo: subrayado sutil (como menú clásico) */
-.links a.active {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  &:hover {
+    background: rgba(255,255,255,.1);
+    color: $white;
+  }
 }
 
-/* Botón salir con estilo simple claro sobre azul */
+/* Estado activo: fondo sutil */
+.nav-links a.active {
+  background: rgba(0,0,0,.15);
+  color: $white;
+}
+
+/* Auth Controls: Alineados al final de la card (col 10-12) */
+.auth-controls {
+  grid-column: 10 / span 3;
+  display: flex;
+  align-items: center;
+  justify-self: end; /* Alinea a la derecha */
+  gap: 0.75rem; /* 12px */
+}
+
+/* --- Estilo para el saludo del usuario (pill) --- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .45rem .9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.user-greeting.pill.info {
+  border-color: rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1);
+  color: $white;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* --- Nuevo Pill Admin --- */
+.pill.admin {
+  padding: .3rem .6rem;
+  font-size: 0.75rem;
+  border-color: #059669;
+  background: #10b981;
+  color: white;
+}
+
+/* --- Botones --- */
 .btn {
-  margin-left: 8px;
-  background: rgba(255,255,255,.15); color: $white;
-  border: 1px solid rgba(255,255,255,.3);
-  padding: 6px 12px; border-radius: 8px; cursor: pointer;
+  display: inline-block;
+  padding: 0.5rem 1rem; /* 8px 16px */
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap; /* Evita que se partan en dos líneas */
+  transition: all .15s ease;
 }
-.btn:hover { background: rgba(255,255,255,.25); }
 
-/* ----- FOOTER (gris como en la imagen) ----- */
+.btn-logout {
+  background: rgba(255,255,255,.1);
+  color: $white;
+  border-color: rgba(255,255,255,.2);
+
+  &:hover {
+    background: rgba(255,255,255,.2);
+    border-color: rgba(255,255,255,.3);
+  }
+}
+
+.btn-secondary { /* Botón de Login */
+  background: transparent;
+  color: $white;
+  border-color: $white;
+  padding: 0.5rem 1rem;
+
+  &:hover {
+    background: $white;
+    color: $blue-dark;
+  }
+}
+
+.btn-primary { /* Botón de Registro */
+  background: $white;
+  color: $blue-dark;
+  border-color: $white;
+
+  &:hover {
+    background: $text-light;
+    border-color: $text-light;
+  }
+}
+
+
+/* ----- FOOTER (de tu archivo original) ----- */
 .footer {
   margin-top: 48px; background: $gray-100; padding: 18px 12px;
   text-align: center; color: #555;
 }
+
+/* ----- Responsivo ----- */
+@media (max-width: 1100px) {
+  /* Alineamos con la card de 10 columnas (2-11) */
+  .nav-left { grid-column: 2 / span 5; } /* Cols 2-6 */
+  .auth-controls { grid-column: 7 / span 5; justify-self: end; } /* Cols 7-11 */
+}
+
+@media (max-width: 768px) {
+  /* En móvil, volvemos a space-between */
+  .wrap {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+  .nav-left {
+    grid-column: auto;
+  }
+  .nav-links {
+    display: none; /* Oculta 'Quién Soy' en móvil */
+  }
+  .brand {
+    font-size: 1.1rem;
+  }
+  .auth-controls {
+    grid-column: auto;
+    justify-self: auto;
+  }
+  .user-greeting {
+    display: none; /* Oculta saludo en móvil */
+  }
+  .pill.admin {
+    display: none; /* Oculta badge admin en móvil */
+  }
+}
+
