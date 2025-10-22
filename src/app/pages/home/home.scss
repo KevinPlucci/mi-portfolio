@@ -63,7 +63,13 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 .subtitle { margin: 0 0 .9rem; color: $muted; }
 
 /* ===== Badge sesión + botón ===== */
-.session { display: flex; gap: .6rem; justify-content: center; align-items: center; }
+.session {
+  display: flex;
+  gap: .6rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap; // Para que se ajuste en pantallas pequeñas
+}
 .pill {
   display: inline-flex; align-items: center; gap: .25rem;
   padding: .45rem .9rem; border-radius: 999px; font-weight: 700;
@@ -79,6 +85,13 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   background: #eef2f9;
   border-color: rgba(30,41,59,.15);
   color: #475569;
+}
+/* Nuevo estilo para el badge de Admin */
+.pill.admin {
+  background: #10b981;
+  border-color: #059669;
+  color: white;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, .25);
 }
 
 /* ===== Botón cerrar sesión ===== */
@@ -99,7 +112,7 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 .btn.danger:hover { box-shadow: 0 12px 28px rgba(220, 38, 38, .42); }
 
 /* ===== Cards internas ===== */
-$card-bg:  color.mix(white, $brand, 96%);
+$card-bg:   color.mix(white, $brand, 96%);
 $card-bg-h: color.mix(white, $brand, 94%);
 
 .cards {
@@ -132,6 +145,18 @@ $card-bg-h: color.mix(white, $brand, 94%);
 .card p  { margin: 0; color: #4b5563; }
 .card p.muted { color: #94a3b8; }
 
+/* Nuevo estilo para la card de Admin */
+.card.admin-card {
+  background: color.mix(#10b981, white, 10%);
+  border-color: #059669;
+  h3 { color: #065f46; }
+  p { color: #047857; }
+  &:hover {
+    background: color.mix(#10b981, white, 15%);
+    border-color: #065f46;
+  }
+}
+
 @media (max-width: 1100px) {
   .card { grid-column: span 6; } /* 2 por fila */
 }
@@ -145,3 +170,4 @@ $card-bg-h: color.mix(white, $brand, 94%);
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+

@@ -11,6 +11,10 @@
 
         <div class="session">
           @if (user$ | async; as user) {
+          <!-- Badge de Admin que solo se muestra si isAdmin$ es true -->
+          @if(isAdmin$ | async){
+          <span class="pill admin">Perfil Admin</span>
+          }
           <span class="pill info"
             >Sesión: <strong>{{ user.email }}</strong></span
           >
@@ -78,6 +82,14 @@
           <p class="muted">Logueate para completar la encuesta.</p>
           }
         </a>
+
+        <!-- Card de Respuestas (solo para admins) -->
+        @if(isAdmin$ | async){
+        <a routerLink="/encuesta-respuestas" class="card admin-card">
+          <h3>Ver Respuestas</h3>
+          <p>Resultados de la encuesta (Admin)</p>
+        </a>
+        }
 
         <a routerLink="/quien-soy" class="card">
           <h3>Quién Soy</h3>

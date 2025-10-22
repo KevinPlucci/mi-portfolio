@@ -26,6 +26,8 @@ type Encuesta = {
   satisfaccion: string;
   jugados: Jugados;
   comentario: string;
+  juegoFavorito: string; // Nuevo campo
+  sugerenciaJuego?: string; // Nuevo campo (opcional)
   createdAt?: any;
 };
 
@@ -55,6 +57,6 @@ export class EncuestaRespuestasComponent {
     if (j.mayorMenor) out.push('Mayor/Menor');
     if (j.preguntados) out.push('Preguntados');
     if (j.secuencias) out.push('Secuencias');
-    return out.join(', ');
+    return out.join(', ') || 'Ninguno';
   }
 }
