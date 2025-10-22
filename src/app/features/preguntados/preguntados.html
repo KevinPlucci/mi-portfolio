@@ -1,43 +1,59 @@
-<section class="quiz">
-  <h2>Preguntados (Banderas)</h2>
+<section class="preg">
+  <div class="home-grid">
+    <div class="about-card blue-skin">
+      <div class="hero">
+        <h2>Adivina la Bandera 🌍</h2>
+      </div>
 
-  @if (finished) {
-  <div class="end">
-    <p>Partida terminada. Puntaje: <b>{{ score }}/{{ 10 }}</b></p>
-    <button class="btn" (click)="reset()">Jugar de nuevo</button>
-  </div>
-  } @else {
-  <p class="meta">Ronda {{ round + 1 }} / {{ 10 }}</p>
+      <div class="panel">
+        @if (!finished()) {
+        <p class="meta">Ronda {{ round() + 1 }} / {{ 10 }}</p>
 
-  @if (loading) {
-  <p>Cargando pregunta…</p>
-  } @else if (q) {
-  <div class="flag">
-    <img [src]="q.imageUrl" alt="Bandera" />
-  </div>
+        @if (loading()) {
+        <div class="status-box">Cargando pregunta…</div>
+        } @else if (error()) {
+        <div class="error-container">
+          <p class="err">{{ error() }}</p>
+          <button class="btn secondary" (click)="retry()">Reintentar</button>
+        </div>
+        } @else if (q()) {
+        <div class="flag">
+          <img [src]="q()!.imageUrl" alt="Bandera del país" />
+        </div>
 
-  <div class="options">
-    @for (opt of q.options; track opt) {
-    <button
-      class="opt"
-      [class.correct]="picked && opt === q.correct"
-      [class.wrong]="picked && opt === picked && opt !== q.correct"
-      [disabled]="!!picked"
-      (click)="pick(opt)"
-    >
-      {{ opt }}
-    </button>
-    }
-  </div>
+        <div class="options">
+          @for (opt of q()!.options; track opt) {
+          <button
+            class="opt btn primary"
+            [class.correct]="picked() && opt === q()!.correct"
+            [class.wrong]="picked() && opt === picked() && opt !== q()!.correct"
+            [disabled]="!!picked()"
+            (click)="pick(opt)"
+          >
+            {{ opt }}
+          </button>
+          }
+        </div>
 
-  @if (picked) {
-  <div class="feedback">
-    @if (picked === q.correct) {
-    <p class="ok">¡Correcto!</p>
-    } @else {
-    <p class="err">Incorrecto. Era <b>{{ q.correct }}</b>.</p>
-    }
-    <button class="btn" (click)="nextQuestion()">Siguiente</button>
+        @if (picked()) {
+        <div class="feedback">
+          @if (picked() === q()!.correct) {
+          <p class="ok">¡Correcto!</p>
+          } @else {
+          <p class="err">Incorrecto. Era <b>{{ q()!.correct }}</b>.</p>
+          }
+          <button class="btn secondary" (click)="nextQuestion()">
+            Siguiente
+          </button>
+        </div>
+        } } } @else {
+        <div class="end-game">
+          <h3>Partida terminada</h3>
+          <p>Puntaje: <b>{{ score() }}</b> / {{ 10 }}</p>
+          <button class="btn primary" (click)="reset()">Jugar de nuevo</button>
+        </div>
+        }
+      </div>
+    </div>
   </div>
-  } } }
 </section>

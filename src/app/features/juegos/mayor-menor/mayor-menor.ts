@@ -11,22 +11,20 @@ import { RankingService } from '../../../core/ranking.service';
 import { ResultsService } from '../../../core/results.service';
 import { lastValueFrom } from 'rxjs';
 
-// El tipo de dato que nos devuelve la API para una carta
+// Tipos de la API
 type ApiCard = {
-  code: string; // "8H", "KS", etc.
-  image: string; // URL de la imagen de la carta
-  value: string; // "8", "KING", "ACE"
-  suit: string; // "HEARTS", "SPADES"
+  code: string;
+  image: string;
+  value: string;
+  suit: string;
 };
 
-// Respuesta de la API al crear un mazo
 type DeckResponse = {
   success: boolean;
   deck_id: string;
   remaining: number;
 };
 
-// Respuesta de la API al robar una carta
 type DrawResponse = {
   success: boolean;
   deck_id: string;
@@ -37,7 +35,7 @@ type DrawResponse = {
 @Component({
   selector: 'app-mayor-menor',
   standalone: true,
-  imports: [CommonModule, HttpClientModule], // HttpClientModule es necesario
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './mayor-menor.html',
   styleUrls: ['./mayor-menor.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,9 +43,9 @@ type DrawResponse = {
 export class MayorMenorComponent implements OnInit {
   private ranking = inject(RankingService);
   private results = inject(ResultsService);
-  private http = inject(HttpClient); // Inyectamos HttpClient
+  private http = inject(HttpClient);
 
-  // --- Estado del Juego con Signals ---
+  // Estado
   deckId = signal<string | null>(null);
   current = signal<ApiCard | null>(null);
   next = signal<ApiCard | null>(null);
@@ -56,7 +54,10 @@ export class MayorMenorComponent implements OnInit {
   score = signal(0);
   rounds = signal(0);
   finished = signal(false);
-  loading = signal(true); // Para mostrar un estado de carga inicial
+  loading = signal(true);
+
+  // NUEVO: controla si la próxima carta se revela visualmente
+  revealNext = signal(false);
 
   ngOnInit(): void {
     this.reset();
@@ -70,9 +71,10 @@ export class MayorMenorComponent implements OnInit {
     this.rounds.set(0);
     this.next.set(null);
     this.resultMessage.set('');
+    this.revealNext.set(false); // mantener oculta la próxima
 
     try {
-      // 1. Pedimos un nuevo mazo barajado
+      // 1) Nuevo mazo
       const deck = await lastValueFrom(
         this.http.get<DeckResponse>(
           'https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1'
@@ -80,7 +82,7 @@ export class MayorMenorComponent implements OnInit {
       );
       this.deckId.set(deck.deck_id);
 
-      // 2. Robamos la primera carta para empezar
+      // 2) Primera carta
       const draw = await lastValueFrom(
         this.http.get<DrawResponse>(
           `https://deckofcardsapi.com/api/deck/${this.deckId()}/draw/?count=1`
@@ -101,18 +103,18 @@ export class MayorMenorComponent implements OnInit {
   async guess(kind: 'mayor' | 'menor'): Promise<void> {
     if (this.loading() || this.finished() || !this.current()) return;
 
-    // Si ya existe una "siguiente carta" (de la ronda anterior),
-    // la movemos para que sea la "carta actual" de esta nueva ronda.
+    // Si hay next de la ronda previa, pasa a current
     if (this.next()) {
       this.current.set(this.next()!);
     }
 
     this.loading.set(true);
     this.resultMessage.set('');
-    this.next.set(null); // Limpiamos la vista para mostrar que estamos robando
+    this.revealNext.set(false); // aseguro que la próxima quede oculta
+    this.next.set(null); // limpia la vista mientras roba
 
     try {
-      // 1. Robamos la siguiente carta
+      // Robar una carta
       const draw = await lastValueFrom(
         this.http.get<DrawResponse>(
           `https://deckofcardsapi.com/api/deck/${this.deckId()}/draw/?count=1`
@@ -125,11 +127,10 @@ export class MayorMenorComponent implements OnInit {
       }
 
       const nextCard = draw.cards[0];
-      this.next.set(nextCard);
+      this.next.set(nextCard); // ya la tenemos, pero seguirá mostrando dorso
 
       const currentValue = this.getCardNumericValue(this.current()!);
       const nextValue = this.getCardNumericValue(nextCard);
-
       const comparison = nextValue - currentValue;
 
       if (comparison === 0) {
@@ -170,7 +171,7 @@ export class MayorMenorComponent implements OnInit {
     ]);
   }
 
-  /** Helper para convertir el valor de la carta (ej: "KING") a un número */
+  /** Convierte el valor de la carta a número */
   private getCardNumericValue(card: ApiCard): number {
     const valueMap: { [key: string]: number } = {
       ACE: 1,

@@ -28,20 +28,23 @@
 
             <div class="card-box next-card-box">
               <p>Carta Oculta</p>
-              @if (loading() && rounds() >= 0 && !next()) {
-              <!-- dorso mientras carga -->
+
+              @if (next()) {
+              <!-- Tenemos la próxima carta, pero la mostramos boca abajo a menos que se habilite revealNext -->
+              <img
+                [src]="revealNext() ? next()!.image : 'https://deckofcardsapi.com/static/img/back.png'"
+                [alt]="revealNext() ? next()!.code : 'Carta boca abajo'"
+                class="card-img"
+              />
+              } @else if (loading()) {
+              <!-- Mientras roba, mostramos dorso con pulso -->
               <img
                 src="https://deckofcardsapi.com/static/img/back.png"
                 alt="Carta boca abajo"
                 class="card-img loading"
               />
-              } @else if (next()) {
-              <img
-                [src]="next()?.image"
-                [alt]="next()?.code"
-                class="card-img"
-              />
               } @else {
+              <!-- Estado inicial sin next todavía -->
               <div class="card-placeholder">?</div>
               }
             </div>

@@ -107,18 +107,19 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   font: 700 1.7rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
   letter-spacing: .12rem;
   color: #0f172a;
+  text-align: center; /* Centramos la palabra para que se vea mejor */
+  word-break: break-all; /* Evita que palabras largas rompan el layout */
 }
 
-/* Teclado */
+/* ===== Teclado (CORREGIDO) ===== */
 .kbd {
   display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: .4rem;
-  margin: .8rem 0;
+  /* Usamos auto-fill para que las teclas se reorganicen automáticamente si no hay espacio */
+  grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+  gap: .5rem; /* Aumentamos el espacio para que respire */
+  margin: 1rem 0;
 }
-@media (max-width: 520px) {
-  .kbd { grid-template-columns: repeat(10, 1fr); }
-}
+
 .key {
   padding: .45rem .5rem;
   background: #fff;
@@ -128,6 +129,7 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
   cursor: pointer;
   transition: background .12s, border-color .12s, transform .06s, box-shadow .12s;
+  font-weight: 500;
 }
 .key:hover { background: color.mix(white, $brand, 96%); border-color: #{color.change($brand-700, $alpha: .8)}; transform: translateY(-1px); }
 .key:active { transform: translateY(0); }
@@ -138,7 +140,7 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 .key:disabled { opacity: .5; cursor: not-allowed; }
 
 /* Acciones + mensajes */
-.actions { display: flex; align-items: center; gap: .8rem; margin-top: .25rem; }
+.actions { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-top: .8rem; }
 .muted { color: $muted; }
 
 .notice {

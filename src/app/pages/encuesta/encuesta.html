@@ -1,88 +1,156 @@
 <section class="encuesta">
-  <h2>Encuesta</h2>
+  <!-- Envolvemos todo en la misma estructura de grid y card del Ahorcado -->
+  <div class="home-grid">
+    <div class="about-card blue-skin">
+      <div class="hero">
+        <h2>Encuesta de Satisfacción</h2>
+      </div>
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <div class="row">
-      <label
-        >Nombre y apellido
-        <input type="text" formControlName="nombre" />
-      </label>
-      <label
-        >Edad
-        <input type="number" formControlName="edad" />
-      </label>
-      <label
-        >Teléfono
-        <input type="text" formControlName="telefono" />
-      </label>
+      <!-- El panel interior contendrá el formulario -->
+      <div class="panel">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <!-- Usamos un grid para organizar los campos del formulario -->
+          <div class="form-grid">
+            <label class="form-field full-width">
+              <span>Nombre y apellido</span>
+              <input type="text" formControlName="nombre" />
+            </label>
+
+            <label class="form-field">
+              <span>Edad</span>
+              <input type="number" formControlName="edad" />
+            </label>
+
+            <label class="form-field">
+              <span>Teléfono</span>
+              <input type="text" formControlName="telefono" />
+            </label>
+
+            <fieldset class="form-field">
+              <legend>Nivel de Satisfacción (1-5)</legend>
+              <div class="radio-group">
+                <label
+                  ><input
+                    type="radio"
+                    formControlName="satisfaccion"
+                    value="1"
+                  />
+                  1</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    formControlName="satisfaccion"
+                    value="2"
+                  />
+                  2</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    formControlName="satisfaccion"
+                    value="3"
+                  />
+                  3</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    formControlName="satisfaccion"
+                    value="4"
+                  />
+                  4</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    formControlName="satisfaccion"
+                    value="5"
+                  />
+                  5</label
+                >
+              </div>
+            </fieldset>
+
+            <fieldset class="form-field" [formGroup]="jugadosGroup">
+              <legend>¿Qué juegos jugaste?</legend>
+              <div class="checkbox-group">
+                <label
+                  ><input type="checkbox" formControlName="ahorcado" />
+                  Ahorcado</label
+                >
+                <label
+                  ><input type="checkbox" formControlName="mayorMenor" /> Mayor
+                  o Menor</label
+                >
+                <label
+                  ><input type="checkbox" formControlName="preguntados" />
+                  Preguntados</label
+                >
+                <label
+                  ><input type="checkbox" formControlName="secuencias" />
+                  Secuencias</label
+                >
+              </div>
+            </fieldset>
+
+            <!-- NUEVAS PREGUNTAS -->
+            <label class="form-field full-width">
+              <span>¿Cuál es tu juego favorito?</span>
+              <input type="text" formControlName="juegoFavorito" />
+            </label>
+
+            <label class="form-field full-width">
+              <span>¿Alguna sugerencia para un nuevo juego? (Opcional)</span>
+              <input type="text" formControlName="sugerenciaJuego" />
+            </label>
+            <!-- FIN DE NUEVAS PREGUNTAS -->
+
+            <label class="form-field full-width">
+              <span>Comentario (máx 255)</span>
+              <textarea rows="4" formControlName="comentario"></textarea>
+            </label>
+          </div>
+
+          <!-- Mensajes de error y éxito -->
+          <div class="feedback-container">
+            <div class="errors">
+              @if (form.touched && form.hasError('atLeastOne')) {
+              <p>Seleccioná al menos un juego.</p>
+              } @if (ctrl('nombre').touched &&
+              ctrl('nombre').hasError('pattern')) {
+              <p>El nombre solo puede contener letras y espacios.</p>
+              } @if (ctrl('edad').touched && ctrl('edad').invalid) {
+              <p>La edad debe ser entre 18 y 99.</p>
+              } @if (ctrl('telefono').touched && ctrl('telefono').invalid) {
+              <p>Teléfono: solo números, máximo 10 dígitos.</p>
+              } @if (ctrl('comentario').touched &&
+              ctrl('comentario').hasError('maxlength')) {
+              <p>El comentario no puede superar los 255 caracteres.</p>
+              } @if (ctrl('juegoFavorito').touched &&
+              ctrl('juegoFavorito').hasError('required')) {
+              <p>Por favor, dinos cuál es tu juego favorito.</p>
+              }
+            </div>
+            @if (ok) {
+            <p class="notice ok">¡Gracias por responder!</p>
+            } @if (err) {
+            <p class="notice err">{{ err }}</p>
+            }
+          </div>
+
+          <!-- Acciones del formulario -->
+          <div class="actions">
+            <button
+              class="btn primary"
+              type="submit"
+              [disabled]="saving || form.invalid"
+            >
+              Enviar Encuesta
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <div class="row">
-      <fieldset>
-        <legend>Satisfacción (1-5)</legend>
-        <label
-          ><input type="radio" formControlName="satisfaccion" value="1" />
-          1</label
-        >
-        <label
-          ><input type="radio" formControlName="satisfaccion" value="2" />
-          2</label
-        >
-        <label
-          ><input type="radio" formControlName="satisfaccion" value="3" />
-          3</label
-        >
-        <label
-          ><input type="radio" formControlName="satisfaccion" value="4" />
-          4</label
-        >
-        <label
-          ><input type="radio" formControlName="satisfaccion" value="5" />
-          5</label
-        >
-      </fieldset>
-
-      <!-- 👇 ahora pasa un FormGroup tipado, sin error TS2740 -->
-      <fieldset [formGroup]="jugadosGroup">
-        <legend>¿Qué juegos jugaste? (al menos uno)</legend>
-        <label
-          ><input type="checkbox" formControlName="ahorcado" /> Ahorcado</label
-        >
-        <label
-          ><input type="checkbox" formControlName="mayorMenor" /> Mayor o
-          Menor</label
-        >
-        <label
-          ><input type="checkbox" formControlName="preguntados" />
-          Preguntados</label
-        >
-        <label
-          ><input type="checkbox" formControlName="secuencias" />
-          Secuencias</label
-        >
-      </fieldset>
-    </div>
-
-    <label
-      >Comentario
-      <textarea rows="4" formControlName="comentario"></textarea>
-    </label>
-
-    <div class="errors">
-      @if (form.touched && form.hasError('atLeastOne')) {
-      <p>Seleccioná al menos un juego.</p>
-      } @if (ctrl('edad').touched && ctrl('edad').invalid) {
-      <p>La edad debe ser entre 18 y 98.</p>
-      } @if (ctrl('telefono').touched && ctrl('telefono').invalid) {
-      <p>Teléfono: solo números, máximo 10 dígitos.</p>
-      }
-    </div>
-
-    <button type="submit" [disabled]="saving || form.invalid">Enviar</button>
-    @if (ok) {
-    <p class="ok">¡Gracias por responder!</p>
-    } @if (err) {
-    <p class="err">{{ err }}</p>
-    }
-  </form>
+  </div>
 </section>

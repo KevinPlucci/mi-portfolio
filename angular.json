@@ -41,6 +41,9 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+
+          },
           "configurations": {
             "development": { "buildTarget": "mi-portfolio:build:development" },
             "production": { "buildTarget": "mi-portfolio:build:production" }

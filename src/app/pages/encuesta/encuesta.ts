@@ -45,26 +45,34 @@ export class EncuestaComponent {
 
   form = this.fb.group(
     {
-      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      nombre: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.pattern('^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*$'),
+        ],
+      ],
       edad: [
         null as number | null,
-        [Validators.required, Validators.min(18), Validators.max(98)],
+        [Validators.required, Validators.min(18), Validators.max(99)],
       ],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
-      satisfaccion: ['', [Validators.required]], // radio
+      satisfaccion: ['', [Validators.required]],
       jugados: this.fb.group({
-        // checkboxes
         ahorcado: [false],
         mayorMenor: [false],
         preguntados: [false],
         secuencias: [false],
       }),
+      juegoFavorito: ['', [Validators.required, Validators.maxLength(255)]],
+      sugerenciaJuego: ['', [Validators.maxLength(255)]],
       comentario: [
         '',
         [
           Validators.required,
           Validators.minLength(5),
-          Validators.maxLength(500),
+          Validators.maxLength(255),
         ],
       ],
     },
@@ -114,6 +122,8 @@ export class EncuestaComponent {
           preguntados: false,
           secuencias: false,
         },
+        juegoFavorito: '',
+        sugerenciaJuego: '',
         comentario: '',
       });
     } catch (e: any) {

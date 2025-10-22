@@ -1,39 +1,60 @@
-<section class="seq">
-  <h2>Secuencias</h2>
+<!-- Usamos la misma estructura y clases que en el componente de Preguntados -->
+<section class="preg">
+  <div class="home-grid">
+    <div class="about-card blue-skin">
+      <div class="hero">
+        <h2>Juego de Secuencias</h2>
+      </div>
 
-  @if (finished) {
-  <div class="end">
-    <p>Partida terminada. Puntaje: <b>{{ score }}/{{ 10 }}</b></p>
-    <button class="btn" (click)="reset()">Jugar de nuevo</button>
-  </div>
-  } @else if (r) {
-  <p class="meta">Ronda {{ round + 1 }} / {{ 10 }}</p>
-  <div class="series">
-    <span>@for (n of r.series; track n) { {{ n }} } … ?</span>
-  </div>
+      <div class="panel">
+        @if (finished()) {
+        <!-- Pantalla de fin de juego -->
+        <div class="end-game">
+          <h3>Partida terminada</h3>
+          <p>Puntaje: <b>{{ score() }}</b> / {{ 10 }}</p>
+          <button class="btn primary" (click)="reset()">Jugar de nuevo</button>
+        </div>
+        } @else if (r()) {
+        <!-- El juego en curso -->
+        <p class="meta">Ronda {{ round() + 1 }} / {{ 10 }}</p>
 
-  <div class="options">
-    @for (opt of r.options; track opt) {
-    <button
-      class="opt"
-      [class.correct]="picked !== undefined && opt === r.correct"
-      [class.wrong]="picked !== undefined && opt === picked && opt !== r.correct"
-      [disabled]="picked !== undefined"
-      (click)="pick(opt)"
-    >
-      {{ opt }}
-    </button>
-    }
-  </div>
+        <!-- La secuencia a adivinar -->
+        <div class="series-container">
+          <p class="series">
+            @for (n of r()!.series; track n; let isLast = $last) {
+            <span>{{ n }}</span>
+            }
+            <span>... ?</span>
+          </p>
+        </div>
 
-  @if (picked !== undefined) {
-  <div class="feedback">
-    @if (picked === r.correct) {
-    <p class="ok">¡Correcto!</p>
-    } @else {
-    <p class="err">Incorrecto. Era <b>{{ r.correct }}</b>.</p>
-    }
-    <button class="btn" (click)="next()">Siguiente</button>
+        <!-- Botones de opciones -->
+        <div class="options">
+          @for (opt of r()!.options; track opt) {
+          <button
+            class="opt btn primary"
+            [class.correct]="picked() !== undefined && opt === r()!.correct"
+            [class.wrong]="picked() !== undefined && opt === picked() && opt !== r()!.correct"
+            [disabled]="picked() !== undefined"
+            (click)="pick(opt)"
+          >
+            {{ opt }}
+          </button>
+          }
+        </div>
+
+        <!-- Feedback y botón de siguiente -->
+        @if (picked() !== undefined) {
+        <div class="feedback">
+          @if (picked() === r()!.correct) {
+          <p class="ok">¡Correcto!</p>
+          } @else {
+          <p class="err">Incorrecto. Era <b>{{ r()!.correct }}</b>.</p>
+          }
+          <button class="btn secondary" (click)="next()">Siguiente</button>
+        </div>
+        } }
+      </div>
+    </div>
   </div>
-  } }
 </section>

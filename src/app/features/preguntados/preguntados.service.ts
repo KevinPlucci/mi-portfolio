@@ -1,58 +1,63 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { Injectable } from '@angular/core';
 
-type Country = { name: string; flagPng: string };
+// Tipos para la pregunta, se mantiene igual
 export type Question = { imageUrl: string; correct: string; options: string[] };
+
+// Nuevo tipo para los países
+type Country = { code: string; name: string };
 
 @Injectable({ providedIn: 'root' })
 export class PreguntadosService {
-  private http = inject(HttpClient);
-  private cache: Country[] = [];
+  // Lista de países con sus códigos y nombres en español.
+  // Puedes agregar o cambiar los que quieras aquí.
+  private readonly ALL_COUNTRIES: Country[] = [
+    { code: 'AR', name: 'Argentina' },
+    { code: 'ES', name: 'España' },
+    { code: 'MX', name: 'México' },
+    { code: 'CO', name: 'Colombia' },
+    { code: 'CL', name: 'Chile' },
+    { code: 'PE', name: 'Perú' },
+    { code: 'UY', name: 'Uruguay' },
+    { code: 'BR', name: 'Brasil' },
+    { code: 'US', name: 'Estados Unidos' },
+    { code: 'CA', name: 'Canadá' },
+    { code: 'FR', name: 'Francia' },
+    { code: 'DE', name: 'Alemania' },
+    { code: 'IT', name: 'Italia' },
+    { code: 'JP', name: 'Japón' },
+    { code: 'CN', name: 'China' },
+    { code: 'AU', name: 'Australia' },
+    { code: 'GB', name: 'Reino Unido' },
+    { code: 'RU', name: 'Rusia' },
+    { code: 'IN', name: 'India' },
+    { code: 'ZA', name: 'Sudáfrica' },
+  ];
 
-  private async loadCountries(): Promise<Country[]> {
-    if (this.cache.length) return this.cache;
-    const data = await firstValueFrom(
-      this.http.get<any[]>(
-        'https://restcountries.com/v3.1/all?fields=name,flags'
-      )
-    );
-    this.cache = (data || [])
-      .filter((x) => x?.name?.common && (x?.flags?.png || x?.flags?.svg))
-      .map((x) => ({
-        name: x.name.common as string,
-        flagPng: (x.flags.png || x.flags.svg) as string,
-      }));
-    // limpiar duplicados por nombre
-    const seen = new Set<string>();
-    this.cache = this.cache.filter((c) =>
-      seen.has(c.name) ? false : seen.add(c.name)
-    );
-    return this.cache;
-  }
-
+  /** Genera una pregunta (1 bandera + 4 opciones de países) */
   async getQuestion(): Promise<Question> {
-    const all = await this.loadCountries();
-    if (all.length < 4)
-      throw new Error('No hay suficientes países para armar opciones');
+    // 1. Elige 4 países al azar de la lista
+    const picked = this.pickMany(this.ALL_COUNTRIES, 4);
 
-    const picked = this.pickMany(all, 4);
-    const correct = picked[0];
+    // 2. El primero será la respuesta correcta
+    const correctCountry = picked[0];
+
+    // 3. Mezcla los nombres de los 4 países para las opciones
     const options = this.shuffle(picked.map((p) => p.name));
-    return { imageUrl: correct.flagPng, correct: correct.name, options };
+
+    // 4. Construye la URL de la imagen de la bandera
+    const imageUrl = `https://flagsapi.com/${correctCountry.code}/flat/64.png`;
+
+    return { imageUrl: imageUrl, correct: correctCountry.name, options };
   }
 
+  /** Helpers (sin cambios) */
   private pickMany<T>(arr: T[], n: number): T[] {
-    const used = new Set<number>();
-    const out: T[] = [];
-    while (out.length < n) {
-      const i = Math.floor(Math.random() * arr.length);
-      if (!used.has(i)) {
-        used.add(i);
-        out.push(arr[i]);
-      }
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
     }
-    return out;
+    return a.slice(0, n);
   }
 
   private shuffle<T>(a: T[]): T[] {

@@ -1,13 +1,188 @@
-.quiz { padding: 1rem; }
-.meta { opacity: .85; margin-bottom: .5rem; }
-.flag { display: grid; place-items: center; margin: .5rem 0 1rem; }
-.flag img { max-width: 360px; width: 100%; border-radius: 12px; border: 1px solid #222; background: #111; }
-.options { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .6rem; }
-.opt { padding: .7rem .9rem; background: #1b1b1b; color: #eee; border: 1px solid #2a2a2a; border-radius: 10px; text-align: left; cursor: pointer; }
-.opt.correct { outline: 2px solid #2ea043; }
-.opt.wrong { outline: 2px solid #f85149; }
-.feedback { margin-top: 1rem; display: flex; align-items: center; gap: .6rem; }
-.btn { padding: .5rem .9rem; background: #2f6fed; color: #fff; border: none; border-radius: 8px; }
-.ok { color: #7ee787; }
-.err { color: #f85149; }
-.end { margin-top: 1rem; display: flex; align-items: center; gap: .6rem; }
+@use "sass:color";
+
+/* ===== Tokens del tema ===== */
+$brand: #1c58b3;
+$brand-700: color.adjust($brand, $lightness: -12%);
+$brand-800: color.adjust($brand, $lightness: -18%);
+$text-on-blue: #334761f5;
+$muted: color.change($text-on-blue, $alpha: .78);
+
+/* ===== Fondo galáctico SOLO detrás ===== */
+:host {
+  display: block;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+:host::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    linear-gradient(
+      180deg,
+      #{color.change($brand, $alpha: .10)} 0%,
+      #{color.change(#000,  $alpha: .10)} 100%
+    ),
+    url('/assets/img/galaxia.jpeg') center / cover no-repeat;
+  filter: saturate(110%) contrast(105%);
+}
+
+/* ===== Contenedor principal ===== */
+.preg { padding: 2rem 1rem 3rem; }
+
+/* Grid 12 para centrar card como en Quién Soy/Home */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .8rem;
+}
+.home-grid > .about-card { grid-column: 4 / span 6; }
+@media (max-width: 1100px) { .home-grid > .about-card { grid-column: 2 / span 10; } }
+@media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
+
+/* ===== Card principal (blue-skin) ===== */
+$panel-start: color.mix(white, $brand, 92%);
+$panel-end:   color.mix(white, $brand-700, 92%);
+
+.blue-skin {
+  background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
+  border-radius: 16px;
+  color: $text-on-blue;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.hero { text-align: left; }
+.hero h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.75rem; line-height: 1.2;
+  color: #0f172a; text-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+
+/* Panel interno */
+.panel {
+  background: color.mix(white, $brand, 96%);
+  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  border-radius: 12px;
+  padding: 1rem 1rem 1.2rem;
+  box-shadow:
+    0 22px 38px rgba(0,0,0,.06),
+    0 6px 14px rgba(0,0,0,.05);
+}
+
+/* Meta / estado */
+.meta {
+  text-align: center;
+  opacity: .85;
+  margin-bottom: .75rem;
+  font-size: 1.05rem;
+  color: $muted;
+}
+
+.status-box {
+  min-height: 220px; display: grid; place-items: center;
+  font-size: 1.1rem; color: $muted;
+}
+
+/* ===== CONTENEDOR DE LA BANDERA (MODIFICADO) ===== */
+.flag {
+  display: grid;
+  place-items: center;
+  margin: .75rem 0 1.25rem;
+  background-color: color.mix(white, $brand, 94%);
+  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  border-radius: 12px;
+  padding: 1.5rem; /* Aumentamos el padding para que la bandera respire */
+  min-height: 200px; /* Aseguramos una altura mínima consistente */
+}
+
+/* ===== IMAGEN DE LA BANDERA (MODIFICADO) ===== */
+.flag img {
+  height: 140px; /* Aumentamos la altura para que sea más visible */
+  width: auto;   /* El ancho se ajusta para mantener la proporción */
+  max-width: 90%; /* Evita que la bandera toque los bordes */
+  border-radius: 8px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2); /* Sombra un poco más notoria */
+  background-color: rgba(255, 255, 255, 0.5); /* Fondo sutil por si hay transparencias */
+  object-fit: contain; /* Asegura que la imagen completa se vea bien */
+}
+
+
+/* Opciones */
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: .75rem;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .6rem 1.1rem; border-radius: 999px; font-weight: 700;
+  border: 1px solid transparent; cursor: pointer; user-select: none;
+  transition: transform .12s, background .12s, box-shadow .12s, border-color .12s;
+}
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: .65; cursor: not-allowed; }
+.btn.primary {
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    #{color.change($brand, $alpha: .95)} 0%,
+    #{color.change($brand-700, $alpha: .95)} 100%
+  );
+  border-color: #{color.change($brand-800, $alpha: .9)};
+  box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn.primary:hover:not([disabled]) {
+  box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
+}
+.btn.secondary {
+  color: $text-on-blue;
+  background: color.mix(white, $brand, 96%);
+  border: 1px solid #{color.change($brand-700, $alpha: .6)};
+  border-radius: 999px;
+  padding: .55rem 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 18px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.btn.secondary:hover:not([disabled]) {
+  background: color.mix(white, $brand, 94%);
+  border-color: #{color.change($brand-700, $alpha: .9)};
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+/* Estados de opción */
+.opt.correct {
+  background: #1b4b23 !important;
+  border-color: #2ea043 !important;
+  color: #fff !important;
+}
+.opt.wrong {
+  background: #582826 !important;
+  border-color: #f85149 !important;
+  color: #fff !important;
+}
+
+/* Feedback */
+.feedback {
+  margin-top: 1.2rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #{color.change($brand-700, $alpha: .25)};
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.ok { color: #137333; font-weight: 800; }
+.err { color: #c62828; }
+
+/* Fin de juego */
+.end-game { padding: 1.4rem 0; text-align: center; }
+.end-game p { font-size: 1.1rem; margin-bottom: 1rem; }
+
+/* Salvaguarda */
+.home-grid > .about-card.blue-skin {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}

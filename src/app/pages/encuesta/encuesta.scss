@@ -1,11 +1,212 @@
-.encuesta { max-width: 900px; margin: 0 auto; padding: 1rem; }
-form { background: #0f0f0f; color: #eee; border: 1px solid #222; border-radius: 12px; padding: 1rem; }
-.row { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: .8rem; }
-label { display: flex; flex-direction: column; gap: .3rem; }
-input, textarea { width: 100%; background: #151515; color: #eee; border: 1px solid #2a2a2a; border-radius: 8px; padding: .55rem .7rem; }
-fieldset { border: 1px solid #2a2a2a; border-radius: 8px; padding: .6rem .8rem; }
-legend { padding: 0 .3rem; opacity: .9; }
-.errors p { color: #f85149; margin: .4rem 0 0; }
-button { margin-top: .8rem; padding: .55rem 1rem; background: #2f6fed; border: none; border-radius: 8px; color: #fff; }
-.ok { color: #7ee787; margin-top: .5rem; }
-.err { color: #f85149; margin-top: .5rem; }
+@use "sass:color";
+
+/* ===== Tokens compartidos (del Ahorcado) ===== */
+$brand: #1c58b3;
+$brand-700: color.adjust($brand, $lightness: -12%);
+$brand-800: color.adjust($brand, $lightness: -18%);
+$text-on-blue: #334761f5;
+$muted: color.change($text-on-blue, $alpha: .78);
+
+/* ===== Fondo galáctico detrás ===== */
+:host {
+  display: block;
+  min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+:host::before {
+  content: "";
+  position: fixed; inset: 0; z-index: -1;
+  background:
+    linear-gradient(
+      180deg,
+      #{color.change($brand, $alpha: .10)} 0%,
+      #{color.change(#000,  $alpha: .10)} 100%
+    ),
+    url('/assets/img/galaxia.jpeg') center / cover no-repeat;
+  filter: saturate(110%) contrast(105%);
+}
+
+/* ===== Layout base (del Ahorcado) ===== */
+.encuesta { padding: 2rem 1rem 3rem; }
+
+/* Grid 12 para centrar card */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: .8rem;
+}
+.home-grid > .about-card { grid-column: 4 / span 6; }
+@media (max-width: 1100px) { .home-grid > .about-card { grid-column: 2 / span 10; } }
+@media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
+
+/* ===== Card principal blanca-azulada (del Ahorcado) ===== */
+$panel-start: color.mix(white, $brand, 92%);
+$panel-end:   color.mix(white, $brand-700, 92%);
+
+.blue-skin {
+  background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
+  border-radius: 16px;
+  color: $text-on-blue;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, .30),
+    inset 0 1px 0 rgba(255, 255, 255, .04);
+  padding: 1.25rem 1.25rem 1.5rem;
+}
+
+.hero h2 {
+  margin: 0 0 .75rem;
+  font-size: 1.75rem; line-height: 1.2;
+  color: #0f172a; text-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+
+/* ===== Panel interno (del Ahorcado) ===== */
+.panel {
+  background: color.mix(white, $brand, 96%);
+  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  border-radius: 12px;
+  padding: 1.2rem 1.2rem 1.3rem;
+  box-shadow:
+    0 22px 38px rgba(0,0,0,.06),
+    0 6px 14px rgba(0,0,0,.05);
+}
+
+/* ===== ESTILOS ESPECÍFICOS DEL FORMULARIO ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+}
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  &.full-width { grid-column: 1 / -1; }
+  span {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #334155;
+    padding-left: .2rem;
+  }
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  background: #fff;
+  color: #1e293b;
+  border: 1px solid #{color.change($brand-700, $alpha: .45)};
+  border-radius: 10px;
+  padding: .6rem .8rem;
+  font-size: 1rem;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.06);
+  transition: border-color .15s, box-shadow .15s;
+  &:focus {
+    outline: none;
+    border-color: $brand;
+    box-shadow: 0 0 0 3px #{color.change($brand, $alpha: .20)};
+  }
+}
+textarea { resize: vertical; }
+
+fieldset {
+  border: 1px solid #{color.change($brand-700, $alpha: .30)};
+  border-radius: 10px;
+  padding: .8rem 1rem;
+  margin: 0;
+  legend {
+    padding: 0 .4rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #334155;
+  }
+}
+
+.form-field + .form-field.full-width {
+  margin-top: .5rem;
+}
+
+.radio-group, .checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-top: .4rem;
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    &:hover {
+      color: $brand;
+    }
+  }
+}
+
+/* Errores y Mensajes */
+.feedback-container { min-height: 24px; margin-top: 1rem; }
+.errors p {
+  color: #c62828;
+  margin: .2rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.notice {
+  margin: .2rem 0 0;
+  padding: .6rem .8rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+}
+.notice.ok {
+  background: color.change(#7ee787, $alpha: .15);
+  border-color: color.change(#7ee787, $alpha: .6);
+  color: #2f7d32;
+}
+.notice.err {
+  background: color.change(#f85149, $alpha: .15);
+  border-color: color.change(#f8514e, $alpha: .6);
+  color: #c62828;
+}
+
+
+/* Acciones y Botones */
+.actions {
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid #{color.change($brand-700, $alpha: .25)};
+  text-align: right;
+}
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .6rem 1.2rem; border-radius: 999px; font-weight: 700;
+  text-decoration: none; cursor: pointer; user-select: none;
+  border: 1px solid transparent;
+  transition: transform .12s, box-shadow .12s, background .12s, border-color .12s;
+}
+.btn.primary {
+  color: #fff;
+  background: linear-gradient(180deg, #{color.change($brand, $alpha: .95)} 0%, #{color.change($brand-700, $alpha: .95)} 100%);
+  border-color: #{color.change($brand-800, $alpha: .9)};
+  box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.btn.primary:hover:not([disabled]) { box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10); }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Safeguard */
+.home-grid > .about-card.blue-skin {
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
