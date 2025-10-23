@@ -13,5 +13,5 @@ export const environment = {
     invitado: { email: 'invitado@demo.com', password: 'guest123' },
   },
   // Emails que considerás administradores (opcional)
-  adminEmails: ['demo@alumno.com'],
+  adminEmails: ['kmplucci9911@gmail.com'],
 };
