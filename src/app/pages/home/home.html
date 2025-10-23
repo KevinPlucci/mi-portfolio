@@ -29,71 +29,105 @@
 
       <!-- Cards internas -->
       <div class="cards">
-        <a routerLink="/juegos" class="card">
-          <h3>Juegos</h3>
-          @if (user$ | async) {
-          <p>Ahorcado y Mayor/Menor.</p>
-          } @else {
-          <p class="muted">Logueate para jugar.</p>
-          }
+        <!-- Tarjeta Juegos -->
+        <a routerLink="/juegos" class="card card-juegos">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Juegos</h3>
+            @if (user$ | async) {
+            <p>Ahorcado y Mayor/Menor.</p>
+            } @else {
+            <p class="muted">Logueate para jugar.</p>
+            }
+          </div>
         </a>
 
-        <a routerLink="/listados" class="card">
-          <h3>Listados</h3>
-          @if (user$ | async) {
-          <p>Consultas y rankings.</p>
-          } @else {
-          <p class="muted">Logueate para ver listados.</p>
-          }
+        <!-- Tarjeta Listados -->
+        <a routerLink="/listados" class="card card-listados">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Listados</h3>
+            @if (user$ | async) {
+            <p>Consultas y rankings.</p>
+            } @else {
+            <p class="muted">Logueate para ver listados.</p>
+            }
+          </div>
         </a>
 
-        <a routerLink="/chat" class="card">
-          <h3>Chat</h3>
-          @if (user$ | async) {
-          <p>Acceso a la sala (solo logueados).</p>
-          } @else {
-          <p class="muted">Solo usuarios logueados.</p>
-          }
+        <!-- Tarjeta Chat -->
+        <a routerLink="/chat" class="card card-chat">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Chat</h3>
+            @if (user$ | async) {
+            <p>Acceso a la sala (solo logueados).</p>
+            } @else {
+            <p class="muted">Solo usuarios logueados.</p>
+            }
+          </div>
         </a>
 
-        <a routerLink="/preguntados" class="card">
-          <h3>Preguntados</h3>
-          @if (user$ | async) {
-          <p>¿De qué país es la bandera?</p>
-          } @else {
-          <p class="muted">Logueate para jugar.</p>
-          }
+        <!-- Tarjeta Preguntados -->
+        <a routerLink="/preguntados" class="card card-preguntados">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Preguntados</h3>
+            @if (user$ | async) {
+            <p>¿De qué país es la bandera?</p>
+            } @else {
+            <p class="muted">Logueate para jugar.</p>
+            }
+          </div>
         </a>
 
-        <a routerLink="/mi-juego" class="card">
-          <h3>Secuencias</h3>
-          @if (user$ | async) {
-          <p>Calculá el siguiente número</p>
-          } @else {
-          <p class="muted">Logueate para jugar.</p>
-          }
+        <!-- Tarjeta Secuencias -->
+        <a routerLink="/mi-juego" class="card card-secuencias">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Secuencias</h3>
+            @if (user$ | async) {
+            <p>Calculá el siguiente número</p>
+            } @else {
+            <p class="muted">Logueate para jugar.</p>
+            }
+          </div>
         </a>
 
-        <a routerLink="/encuesta" class="card">
-          <h3>Encuesta</h3>
-          @if (user$ | async) {
-          <p>3 preguntas con validaciones</p>
-          } @else {
-          <p class="muted">Logueate para completar la encuesta.</p>
-          }
+        <!-- Tarjeta Encuesta -->
+        <a routerLink="/encuesta" class="card card-encuesta">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Encuesta</h3>
+            @if (user$ | async) {
+            <p>3 preguntas con validaciones</p>
+            } @else {
+            <p class="muted">Logueate para completar la encuesta.</p>
+            }
+          </div>
         </a>
 
         <!-- Card de Respuestas (solo para admins) -->
         @if(isAdmin$ | async){
-        <a routerLink="/encuesta-respuestas" class="card admin-card">
-          <h3>Ver Respuestas</h3>
-          <p>Resultados de la encuesta (Admin)</p>
+        <a
+          routerLink="/encuesta-respuestas"
+          class="card card-respuestas admin-card"
+        >
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Ver Respuestas</h3>
+            <p>Resultados de la encuesta (Admin)</p>
+          </div>
         </a>
         }
 
-        <a routerLink="/quien-soy" class="card">
-          <h3>Quién Soy</h3>
-          <p>Datos del alumno y juegos</p>
+        <!-- Tarjeta Quien Soy -->
+        <a routerLink="/quien-soy" class="card card-quien-soy">
+          <div class="card-bg"></div>
+          <div class="card-content">
+            <h3>Quién Soy</h3>
+            <p>Datos del alumno y juegos</p>
+          </div>
         </a>
       </div>
     </div>

@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /* ===== Paleta igual a tus capturas ===== */
 $blue: #0a76c7;
 $blue-dark: #0963a5; // Tono de hover que ya tenías
@@ -13,11 +15,7 @@ $text-muted: #e9ecef;
 
 /* Layout base */
 :host { display: block; color: $text; }
-.page {
-  padding: 24px 16px;
-  /* Añadimos padding-top para dejar espacio a la navbar fija */
-  padding-top: calc(4rem + 24px);
-}
+/* El padding base se mueve a la clase .page */
 
 /* ----- NAVBAR ----- */
 .topbar {
@@ -72,11 +70,13 @@ $text-muted: #e9ecef;
 .nav-links {
   display: flex;
   align-items: center;
-  justify-content: center; /* Centra los links */
-  gap: 1.5rem; /* Más espacio entre links */
+  justify-content: flex-start; /* Alineado a la izquierda */
+  gap: 0.5rem; /* Espacio más chico entre links */
 }
 
-.nav-links a {
+/* Estilo base para links y el toggle del dropdown */
+.nav-links a,
+.nav-group-toggle {
   font-size: 0.95rem; /* ~15px */
   font-weight: 600;
   color: $text-muted;
@@ -84,6 +84,8 @@ $text-muted: #e9ecef;
   padding: 0.5rem 1rem; /* 8px 16px */
   border-radius: 8px;
   transition: background .15s ease, color .15s ease;
+  cursor: pointer;
+  white-space: nowrap; // Para que no se partan
 
   &:hover {
     background: rgba(255,255,255,.1);
@@ -96,6 +98,136 @@ $text-muted: #e9ecef;
   background: rgba(0,0,0,.15);
   color: $white;
 }
+
+
+/* --- Menú Horizontal Desplegable (para "Juegos") --- */
+.nav-item-group {
+  display: flex;
+  align-items: center;
+  position: relative; // Para el hover
+
+  /* El toggle "Juegos ►" */
+  .nav-group-toggle {
+    &::after {
+      content: ' ►'; // Flecha a la derecha
+      font-size: 0.7em;
+      display: inline-block;
+      margin-left: .3rem;
+      vertical-align: middle;
+      transition: transform .2s ease-out;
+    }
+  }
+
+  /* El contenedor de los items que aparecen */
+  .nav-group-items {
+    display: flex;
+    flex-direction: row; // Horizontal
+
+    /* Ocultamos los links por defecto */
+    /* Usamos max-width 0 para la animación de "deslizar" */
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.5s ease-out, opacity 0.4s ease-out;
+
+    /* Aseguramos que los links internos no se partan */
+    a {
+      white-space: nowrap;
+      margin-left: 0.5rem; // Espacio entre los nuevos items
+      /* Hereda el estilo de .nav-links a */
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: $text-muted;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background .15s ease, color .15s ease;
+      cursor: pointer;
+
+      &:hover {
+        background: rgba(255,255,255,.1);
+        color: $white;
+      }
+      &.active {
+        background: rgba(0,0,0,.15);
+        color: $white;
+      }
+    }
+
+    /* Estilo especial para el link de admin */
+    a.link-admin {
+      color: #bbf7d0; // Verde claro
+      &:hover {
+        background: rgba(22, 163, 74, .2);
+        color: #f0fdf4;
+      }
+      &.active {
+        background: rgba(22, 163, 74, .4);
+        color: #f0fdf4;
+      }
+    }
+  }
+
+  /* Al hacer hover en el GRUPO */
+  &:hover {
+    .nav-group-items {
+      /* Mostramos los links */
+      max-width: 600px; // Ancho máximo para que quepan todos
+      opacity: 1;
+    }
+
+    /* Animación de la flecha */
+    .nav-group-toggle::after {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+/* --- Corrección para el Menú de la Derecha (+ Mas) --- */
+/* Usamos position:absolute para evitar que mueva el layout */
+.auth-controls .nav-item-group.menu-right {
+
+  /* El contenedor de los items */
+  .nav-group-items {
+    position: absolute; /* SACA EL MENÚ DEL FLUJO DEL LAYOUT */
+    top: 0;
+    right: calc(100% + 0.5rem); /* A la izquierda del toggle, con 0.5rem de espacio */
+
+    /* Invertimos el orden para que se lea de der-a-izq */
+    flex-direction: row-reverse;
+
+    /* Animación con opacity y transform (sin max-width) */
+    max-width: none; /* Anulamos la animación de max-width */
+    overflow: visible;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px); /* Ligeramente a la derecha para animar a la izquierda */
+    transition: visibility 0s 0.3s, opacity 0.3s ease-out, transform 0.3s ease-out;
+
+    /* Espaciado para los links */
+    a {
+      margin-left: 0;
+      margin-right: 0.5rem;
+    }
+  }
+
+  /* Al hacer hover, mostramos el menú */
+  &:hover {
+    .nav-group-items {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      /* Transición al aparecer */
+      transition: visibility 0s 0s, opacity 0.3s ease-out, transform 0.3s ease-out;
+    }
+
+    /* La flecha gira igual */
+    .nav-group-toggle::after {
+      transform: rotate(90deg);
+    }
+  }
+}
+
 
 /* Auth Controls: Alineados al final de la card (col 10-12) */
 .auth-controls {
@@ -132,7 +264,7 @@ $text-muted: #e9ecef;
   padding: .3rem .6rem;
   font-size: 0.75rem;
   border-color: #059669;
-  background: #10b981;
+  background: #10b891;
   color: white;
 }
 
@@ -198,6 +330,13 @@ $text-muted: #e9ecef;
   .auth-controls { grid-column: 7 / span 5; justify-self: end; } /* Cols 7-11 */
 }
 
+@media (max-width: 900px) {
+  /* Ocultamos los menús desplegables en pantallas más chicas */
+  .nav-item-group {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   /* En móvil, volvemos a space-between */
   .wrap {
@@ -209,7 +348,7 @@ $text-muted: #e9ecef;
     grid-column: auto;
   }
   .nav-links {
-    display: none; /* Oculta 'Quién Soy' en móvil */
+    display: none; /* Oculta 'Quién Soy' y 'Juegos' en móvil */
   }
   .brand {
     font-size: 1.1rem;
@@ -224,5 +363,43 @@ $text-muted: #e9ecef;
   .pill.admin {
     display: none; /* Oculta badge admin en móvil */
   }
+}
+
+
+/* =================================================
+  CÓDIGO PARA EL SCROLL FIJO (AHORA CON CENTRADO)
+=================================================
+*/
+
+/* Estilo base de la página (el que ya tenías) */
+.page {
+  padding: 24px 16px;
+  padding-top: calc(4rem + 24px); /* 4rem navbar + 24px padding */
+  min-height: calc(100vh - 4rem); /* Asegura que la página ocupe al menos el alto de la pantalla */
+}
+
+/* Esta nueva clase se aplicará dinámicamente
+  a las rutas que especificaste (juegos, chat, home, etc.)
+*/
+.page.is-fixed-page {
+  height: calc(100vh - 4rem); /* Fija la altura al 100% de la pantalla (menos la navbar) */
+  overflow: hidden; /* ¡Esconde el scrollbar! */
+  padding: 0; /* Quita el padding global para que el componente hijo (ej: chat) ocupe todo el espacio */
+
+  /* --- CAMBIOS PARA CENTRAR VERTICALMENTE --- */
+  display: flex;             /* 1. Convierte en contenedor flex */
+  flex-direction: column;    /* 2. Asegura que el contenido fluya verticalmente (por si acaso) */
+  align-items: center;       /* 3. Centra horizontalmente el contenido hijo */
+  justify-content: center;   /* 4. Centra verticalmente el contenido hijo */
+}
+
+/* Opcional: Si el contenido DENTRO de la página fija necesita scroll (como el chat)
+   puedes añadir estilos específicos para el componente hijo.
+   Por ejemplo, si el componente del chat tiene un selector 'app-chat':
+*/
+.page.is-fixed-page > app-chat {
+  width: 100%; /* Ocupa el ancho disponible */
+  height: 100%; /* Ocupa el alto disponible */
+  /* El componente chat manejaría su propio scroll interno */
 }
 

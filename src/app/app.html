@@ -1,9 +1,4 @@
 <nav class="topbar">
-  <!--
-    Usamos el mismo 'home-grid' de 12 columnas que usan
-    tus páginas (Home, Quien Soy, etc.) para que el contenido
-    de la navbar se alinee con las cards de abajo.
-  -->
   <div class="wrap home-grid">
     <!-- Brand + Nav Links (Left side) -->
     <div class="nav-left">
@@ -11,13 +6,56 @@
         <span>MiPorfolio</span>
       </a>
       <div class="nav-links">
-        <!-- Link 'Home' eliminado por redundancia -->
         <a routerLink="/quien-soy" routerLinkActive="active">Quién Soy</a>
+
+        <!-- Menú Desplegable de Juegos -->
+        <div class="nav-item-group">
+          <a
+            class="nav-group-toggle"
+            routerLink="/juegos"
+            routerLinkActive="active"
+            >Juegos</a
+          >
+          <div class="nav-group-items">
+            <a routerLink="/juegos/mayor-menor" routerLinkActive="active"
+              >Mayor o Menor</a
+            >
+            <a routerLink="/juegos/ahorcado" routerLinkActive="active"
+              >Ahorcado</a
+            >
+            <a routerLink="/preguntados" routerLinkActive="active"
+              >Preguntados</a
+            >
+            <a routerLink="/mi-juego" routerLinkActive="active">Secuencias</a>
+          </div>
+        </div>
+        <!-- Fin de Menú Juegos -->
       </div>
     </div>
 
     <!-- Auth controls (Right side) -->
     <div class="auth-controls">
+      <!-- Nuevo Menú Desplegable "+ Mas" -->
+      <!-- Le añadimos la clase 'menu-right' para un estilo de animación diferente -->
+      <div class="nav-item-group menu-right">
+        <a class="nav-group-toggle">+ Mas</a>
+        <div class="nav-group-items">
+          <a routerLink="/chat" routerLinkActive="active">Chat</a>
+          <a routerLink="/encuesta" routerLinkActive="active">Encuesta</a>
+          <a routerLink="/listados" routerLinkActive="active">Listados</a>
+          <!-- Link solo para Admin -->
+          @if(auth.isAdmin$ | async){
+          <a
+            routerLink="/encuesta-respuestas"
+            routerLinkActive="active"
+            class="link-admin"
+            >Respuestas</a
+          >
+          }
+        </div>
+      </div>
+      <!-- Fin de Menú + Mas -->
+
       @if (auth.user$ | async; as user) {
       <!-- Admin Badge -->
       @if(auth.isAdmin$ | async){
@@ -34,6 +72,10 @@
   </div>
 </nav>
 
+<!--
+  ELIMINAMOS EL BINDING DE CLASE:
+  [class.is-fixed-page]="isPageFixed()"
+-->
 <main class="page">
   <router-outlet />
 </main>

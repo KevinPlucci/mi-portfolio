@@ -69,47 +69,94 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 .cards {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: .9rem;
+  gap: 1rem; /* Mantenemos el gap de home.scss */
 }
-@media (max-width: 1100px) { .cards { gap: .8rem; } }
 
+/* --- Estilo Base para TODAS las Cards (Copiado de home.scss) --- */
 .card {
-  grid-column: span 6; /* 2 por fila en desktop */
-  display: flex; align-items: center; gap: .75rem;
-  background: color.mix(white, $brand, 96%);
-  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  grid-column: span 6; /* 2 por fila */
+  position: relative; /* Para posicionar .card-bg y .card-content */
   border-radius: 14px;
-  padding: .95rem 1rem;
-  text-decoration: none; color: #111827;
-  box-shadow:
-    0 22px 38px rgba(0,0,0,.06),
-    0 6px 14px rgba(0,0,0,.05);
-  transition: transform .12s, background .12s, border-color .12s, box-shadow .12s;
-  outline: none;
+  overflow: hidden; /* Clave para que el blur no se salga */
+  aspect-ratio: 4 / 3; /* Ratio para que no sean muy altas */
+  color: #fff; /* Texto blanco por defecto */
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  transition: transform .2s ease-out, box-shadow .2s ease-out;
 
-  .info {
-    h3 { margin: 0 0 .25rem; }
-    p  { margin: 0; color: $muted; }
-  }
-
+  /* Efecto hover general */
   &:hover {
-    background: color.mix(white, $brand, 94%);
-    border-color: #{color.change($brand-700, $alpha: .55)};
-    transform: translateY(-2px);
-    box-shadow:
-      0 30px 50px rgba(0,0,0,.10),
-      0 10px 18px rgba(0,0,0,.06);
-  }
-  &:focus-visible {
-    box-shadow: 0 0 0 3px #{color.change($brand, $alpha: .20)},
-                inset 0 1px 0 rgba(255,255,255,.06);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0,0,0,.3);
   }
 }
-@media (max-width: 1100px) { .card { grid-column: span 12; } }
 
-/* Acento de borde izquierdo */
-.card.accent { border-left: 6px solid #{color.change($brand-700, $alpha: .55)}; }
-.card.accent:hover { border-left-color: #{color.change($brand-800, $alpha: .9)}; }
+/* --- Contenedor de la Imagen de Fondo (Copiado de home.scss) --- */
+.card-bg {
+  position: absolute;
+  inset: 0; /* Cubre toda la card */
+  background-size: cover;
+  background-position: center;
+  transition: transform .3s ease-out;
+  z-index: 0;
+
+  /* Imagen de fallback (opcional) */
+  background-color: #334;
+
+  /* Efecto hover sutil a la imagen */
+  .card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+/* --- Contenedor del Contenido (Texto + Efecto Cristal - Copiado de home.scss) --- */
+.card-content {
+  position: relative; /* Sobre .card-bg */
+  z-index: 1;
+  height: 100%;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Alinea el texto abajo */
+
+  /* Efecto Cristal (Glassmorphism) */
+  background: rgba(0, 0, 0, 0.25); /* Fondo oscuro semi-transparente */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px); /* Para Safari */
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Borde superior sutil */
+
+  /* Transición suave para el hover */
+  transition: background .2s ease-out;
+
+  .card:hover & {
+     background: rgba(0, 0, 0, 0.4); /* Más oscuro en hover */
+  }
+}
+
+/* --- Estilos del Texto dentro de la Card (Copiado de home.scss) --- */
+.card h3 {
+  margin: 0 0 .2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.6);
+}
+.card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+
+
+/* --- Asignación de Imágenes de Fondo Específicas --- */
+.card-ahorcado .card-bg { background-image: url('/assets/img/ahorcadouno.webp'); }
+.card-mayor-menor .card-bg { background-image: url('/assets/img/mayor y menor.jpeg'); }
+
+/* --- Media Queries (Adaptado para 2 columnas) --- */
+@media (max-width: 720px) {
+  .card { grid-column: span 12; aspect-ratio: 16/9; } /* 1 por fila en móvil */
+}
 
 /* Safeguard por si quedan reglas viejas */
 .home-grid > .about-card.blue-skin {

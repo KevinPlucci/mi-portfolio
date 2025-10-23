@@ -71,7 +71,9 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   flex-wrap: wrap; // Para que se ajuste en pantallas pequeñas
 }
 .pill {
-  display: inline-flex; align-items: center; gap: .25rem;
+  display: inline-flex;
+  align-items: baseline; /* <-- Alinear por la línea base del texto */
+  gap: .25rem;
   padding: .45rem .9rem; border-radius: 999px; font-weight: 700;
   border: 1px solid transparent; user-select: none;
 }
@@ -86,12 +88,12 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   border-color: rgba(30,41,59,.15);
   color: #475569;
 }
-/* Nuevo estilo para el badge de Admin */
 .pill.admin {
   background: #10b981;
   border-color: #059669;
   color: white;
   box-shadow: 0 6px 16px rgba(16, 185, 129, .25);
+  align-items: center; /* Los badges de solo una palabra sí van centrados */
 }
 
 /* ===== Botón cerrar sesión ===== */
@@ -112,56 +114,127 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 .btn.danger:hover { box-shadow: 0 12px 28px rgba(220, 38, 38, .42); }
 
 /* ===== Cards internas ===== */
-$card-bg:   color.mix(white, $brand, 96%);
-$card-bg-h: color.mix(white, $brand, 94%);
-
 .cards {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 1rem;
-  margin-top: .8rem;
+  margin-top: 1.5rem; /* Aumentamos el margen superior */
 }
+
+/* --- Estilo Base para TODAS las Cards --- */
 .card {
   grid-column: span 4; /* 3 por fila en desktop */
-  background: $card-bg;
-  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  position: relative; /* Para posicionar .card-bg y .card-content */
   border-radius: 14px;
-  padding: 1rem 1.1rem;
-  color: #111827; text-decoration: none;
-  box-shadow:
-    0 22px 38px rgba(0,0,0,.06),
-    0 6px 14px rgba(0,0,0,.05);
-  transition: transform .12s, background .12s, border-color .12s, box-shadow .12s;
-}
-.card:hover {
-  background: $card-bg-h;
-  border-color: #{color.change($brand-700, $alpha: .55)};
-  transform: translateY(-2px);
-  box-shadow:
-    0 30px 50px rgba(0,0,0,.10),
-    0 10px 18px rgba(0,0,0,.06);
-}
-.card h3 { margin: 0 0 .4rem; }
-.card p  { margin: 0; color: #4b5563; }
-.card p.muted { color: #94a3b8; }
+  overflow: hidden; /* Clave para que el blur no se salga */
+  aspect-ratio: 4 / 3; /* Ratio para que no sean muy altas */
+  color: #fff; /* Texto blanco por defecto */
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  transition: transform .2s ease-out, box-shadow .2s ease-out;
 
-/* Nuevo estilo para la card de Admin */
-.card.admin-card {
-  background: color.mix(#10b981, white, 10%);
-  border-color: #059669;
-  h3 { color: #065f46; }
-  p { color: #047857; }
+  /* Efecto hover general */
   &:hover {
-    background: color.mix(#10b981, white, 15%);
-    border-color: #065f46;
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0,0,0,.3);
   }
 }
 
+/* --- Contenedor de la Imagen de Fondo --- */
+.card-bg {
+  position: absolute;
+  inset: 0; /* Cubre toda la card */
+  background-size: cover;
+  background-position: center;
+  transition: transform .3s ease-out;
+  z-index: 0;
+
+  /* Imagen de fallback (opcional) */
+  background-color: #334;
+
+  /* Efecto hover sutil a la imagen */
+  .card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+/* --- Contenedor del Contenido (Texto + Efecto Cristal) --- */
+.card-content {
+  position: relative; /* Sobre .card-bg */
+  z-index: 1;
+  height: 100%;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Alinea el texto abajo */
+
+  /* Efecto Cristal (Glassmorphism) */
+  background: rgba(0, 0, 0, 0.25); /* Fondo oscuro semi-transparente */
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px); /* Para Safari */
+  border-top: 1px solid rgba(255, 255, 255, 0.2); /* Borde superior sutil */
+
+  /* Transición suave para el hover */
+  transition: background .2s ease-out;
+
+  .card:hover & {
+     background: rgba(0, 0, 0, 0.4); /* Más oscuro en hover */
+  }
+}
+
+/* --- Estilos del Texto dentro de la Card --- */
+.card h3 {
+  margin: 0 0 .2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0,0,0,.6);
+}
+.card p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 1px 2px rgba(0,0,0,.5);
+}
+.card p.muted { /* Para texto cuando no estás logueado */
+  color: rgba(255, 255, 255, 0.6);
+}
+
+
+/* --- Asignación de Imágenes de Fondo Específicas --- */
+.card-juegos .card-bg { background-image: url('/assets/img/joystick.webp'); }
+.card-listados .card-bg { background-image: url('/assets/img/ranking.webp'); }
+.card-chat .card-bg { background-image: url('/assets/img/WhatsApp.webp'); }
+.card-preguntados .card-bg { background-image: url('/assets/img/preguntadosBanderas.jpg'); }
+.card-secuencias .card-bg { background-image: url('/assets/img/numeros.jpg'); }
+.card-encuesta .card-bg { background-image: url('/assets/img/encuestas.jpg'); }
+.card-respuestas .card-bg { background-image: url('/assets/img/ranking.webp'); } /* Usando ranking para admin */
+.card-quien-soy .card-bg { background-image: url('/assets/img/quienSoy.gif'); }
+
+
+/* --- Estilo Especial para la Card de Admin (ya lo tenías) --- */
+.card.admin-card {
+  /* Mantenemos el borde verde, pero el fondo y texto ahora son manejados por .card-content */
+  .card-content {
+    border-top: 1px solid rgba(74, 222, 128, 0.4); /* Borde superior verde */
+    background: rgba(5, 150, 105, 0.3); /* Fondo verdoso */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+  }
+  h3 { color: #d1fae5; }
+  p { color: #a7f3d0; }
+
+  &:hover .card-content {
+    background: rgba(5, 150, 105, 0.45);
+  }
+}
+
+/* --- Media Queries (Adaptado) --- */
 @media (max-width: 1100px) {
-  .card { grid-column: span 6; } /* 2 por fila */
+  .card { grid-column: span 6; aspect-ratio: 16 / 9; } /* 2 por fila, más anchas */
 }
 @media (max-width: 720px) {
-  .card { grid-column: 1 / -1; } /* 1 por fila */
+  .card { grid-column: 1 / -1; aspect-ratio: 16 / 9; } /* 1 por fila */
 }
 
 /* ===== Salvaguarda contra reglas viejas ===== */
