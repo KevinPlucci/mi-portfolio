@@ -250,10 +250,15 @@ $text-muted: #e9ecef;
   border: 1px solid transparent;
   white-space: nowrap;
 }
+
+/* =================================================== */
+/* ===== MODIFICACIÓN 1: USUARIO AMARILLO BRILLANTE ===== */
+/* =================================================== */
 .user-greeting.pill.info {
-  border-color: rgba(255,255,255,.2);
-  background: rgba(255,255,255,.1);
-  color: $white;
+  /* Fondo amarillo brillante, texto oscuro, borde más oscuro */
+  border-color: #f59e0b; // Borde más oscuro
+  background: #fde047; // Fondo brillante (era el borde)
+  color: #a16207; // Mantenemos texto oscuro por legibilidad
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
@@ -282,14 +287,19 @@ $text-muted: #e9ecef;
   transition: all .15s ease;
 }
 
+/* ============================================== */
+/* ===== MODIFICACIÓN 2: BOTÓN ROJO BRILLANTE ===== */
+/* ============================================== */
 .btn-logout {
-  background: rgba(255,255,255,.1);
-  color: $white;
-  border-color: rgba(255,255,255,.2);
+  /* Fondo rojo brillante, texto blanco, borde más oscuro */
+  background: #ef4444; // Rojo brillante
+  color: #ffffff; // Texto blanco
+  border-color: #dc2626; // Borde más oscuro
 
   &:hover {
-    background: rgba(255,255,255,.2);
-    border-color: rgba(255,255,255,.3);
+    background: #dc2626; // Hover más oscuro
+    border-color: #b91c1c;
+    color: #ffffff;
   }
 }
 
@@ -378,6 +388,3 @@ $text-muted: #e9ecef;
   min-height: calc(100vh - 4rem); /* Asegura que la página ocupe al menos el alto de la pantalla */
 }
 
-/* Se eliminaron las reglas:
-  .page.is-fixed-page { ... }
-*/
