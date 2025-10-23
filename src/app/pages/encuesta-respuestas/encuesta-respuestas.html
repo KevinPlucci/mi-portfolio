@@ -1,12 +1,18 @@
 <section class="encuestas-admin">
-  <!-- Estructura de card principal (como en Ahorcado/Home) -->
   <div class="home-grid">
     <div class="about-card blue-skin">
       <div class="hero">
         <h2>Respuestas de la Encuesta</h2>
+        <div class="hero-actions">
+          <a routerLink="/home" class="btn">
+            <i class="fa fa-arrow-left"></i> Volver
+          </a>
+          <button (click)="borrarEncuestas()" class="btn btn-danger">
+            <i class="fa fa-trash"></i> Borrar Tabla
+          </button>
+        </div>
       </div>
 
-      <!-- Panel interno para la tabla -->
       <div class="panel">
         @if (items$ | async; as items) {
         <div class="table-container">

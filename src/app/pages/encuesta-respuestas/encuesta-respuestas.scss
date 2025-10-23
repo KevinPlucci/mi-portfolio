@@ -33,12 +33,14 @@ $text-on-blue: #334761f5;
   grid-template-columns: repeat(12, 1fr);
   gap: .8rem;
 }
-.home-grid > .about-card { grid-column: 2 / span 10; } // Más ancho para la tabla
+.home-grid > .about-card { grid-column: 2 / span 10; }
 @media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
 
 /* ===== Card principal (del Ahorcado/Home) ===== */
+// -- ESTAS VARIABLES FALTABAN O ESTABAN MAL UBICADAS --
 $panel-start: color.mix(white, $brand, 92%);
 $panel-end:   color.mix(white, $brand-700, 92%);
+// --------------------------------------------------
 
 .blue-skin {
   background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
@@ -57,16 +59,56 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   color: #0f172a; text-shadow: 0 1px 0 rgba(0,0,0,.06);
 }
 
+/* ===== Estilos para botones de acción ===== */
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #{color.change($brand, $alpha: .3)};
+  background-color: color.mix(white, $brand, 90%);
+  color: #1e3a8a;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 150ms ease-out;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: color.mix(white, $brand, 85%);
+    border-color: #{color.change($brand, $alpha: .5)};
+  }
+}
+
+.btn-danger {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+
+  &:hover {
+    background-color: #fecaca;
+    border-color: #f87171;
+  }
+}
+
 /* ===== Panel interno (del Ahorcado/Home) ===== */
 .panel {
   background: color.mix(white, $brand, 96%);
   border: 1px solid #{color.change($brand-700, $alpha: .25)};
   border-radius: 12px;
-  padding: 0; // Padding se manejará en el contenedor de la tabla
+  padding: 0;
   box-shadow:
     0 22px 38px rgba(0,0,0,.06),
     0 6px 14px rgba(0,0,0,.05);
-  overflow-x: auto; // Para scroll horizontal en pantallas pequeñas
+  overflow-x: auto;
 }
 
 /* ===== Estilos de la tabla ===== */
@@ -78,7 +120,7 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 
 table {
   width: 100%;
-  min-width: 800px; // Ancho mínimo para evitar que se comprima demasiado
+  min-width: 800px;
   border-collapse: collapse;
   color: #334155;
 }
@@ -114,5 +156,5 @@ tbody tr:hover {
 
 .comment {
   max-width: 350px;
-  white-space: normal; // Permitir que el comentario ocupe varias líneas
+  white-space: normal;
 }
