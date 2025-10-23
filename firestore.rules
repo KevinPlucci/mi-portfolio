@@ -1,11 +1,18 @@
+// firestore.rules (completo, con permisos para admins y guard)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     match /chatMessages/{docId} {
-      allow read: if true;
-      allow create: if request.auth != null;
-      allow update, delete: if false;
+      allow read: if true; // Todos pueden leer mensajes
+      allow create: if request.auth != null; // Solo logueados pueden crear
+      // --- AÑADIDO: Permitir borrar solo a admins ---
+      allow delete: if request.auth != null && (
+                      request.auth.token.admin == true ||
+                      exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+                    );
+      // --- FIN AÑADIDO ---
+      allow update: if false; // No se pueden editar mensajes
     }
 
     match /ranking/{uid} {
@@ -13,45 +20,38 @@ service cloud.firestore {
       allow create, update: if request.auth != null
                               && request.auth.uid == uid
                               && request.resource.data.uid == uid;
-      // --- AÑADIDO: Permitir borrar solo a admins ---
       allow delete: if request.auth != null && (
                       request.auth.token.admin == true ||
                       exists(/databases/$(database)/documents/admins/$(request.auth.uid))
                     );
-      // --- FIN AÑADIDO ---
     }
 
     match /resultados/{docId} {
-      allow read: if true; // Permitir lectura a todos (para tablas)
+      allow read: if true;
       allow create: if request.auth != null
                       && request.resource.data.uid == request.auth.uid;
-      // --- AÑADIDO: Permitir borrar solo a admins ---
       allow delete: if request.auth != null && (
                       request.auth.token.admin == true ||
                       exists(/databases/$(database)/documents/admins/$(request.auth.uid))
                     );
-      // --- FIN AÑADIDO ---
-       allow update: if false; // Generalmente no se actualizan resultados individuales
+       allow update: if false;
     }
 
     // Encuestas: create para usuarios, read/delete para admin
     match /encuestas/{docId} {
       allow create: if request.auth != null
                       && request.resource.data.uid == request.auth.uid;
-      // --- ACTUALIZADO: Añadido delete a la regla de admin ---
       allow read, delete: if request.auth != null && (
                       request.auth.token.admin == true ||
                       exists(/databases/$(database)/documents/admins/$(request.auth.uid))
                     );
-      // --- FIN ACTUALIZADO ---
       allow update: if false;
     }
 
     // Colección de admins (para el guard)
     match /admins/{uid} {
-      // el propio usuario puede leerse a sí mismo (lo usa el guard)
       allow read: if request.auth != null && request.auth.uid == uid;
-      allow create, update, delete: if false; // administrar por consola/scripts
+      allow create, update, delete: if false;
     }
 
     match /loginLogs/{docId} {

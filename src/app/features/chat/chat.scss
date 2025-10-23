@@ -1,15 +1,29 @@
-@use "sass:color"; // Añadido para usar las funciones de color modernas
+@use "sass:color";
 
-/* ===== Tokens del tema ===== */
-$brand: #1c58b3;
-// Corregido: Usar color.adjust en lugar de darken
-$brand-700: color.adjust($brand, $lightness: -12%);
-$brand-800: color.adjust($brand, $lightness: -18%);
-$text-on-blue: #334761f5;
-// Corregido: Usar color.change para ajustar alpha
-$muted: color.change(#334761, $alpha: 0.78);
+/* ===== Tokens ===== */
+// Ajustes a los colores base para un look más vibrante
+$brand: #3f51b5; // Un azul más cálido o vibrante
+$brand-700: color.adjust($brand, $lightness: -10%);
+$brand-800: color.adjust($brand, $lightness: -15%);
+$text-dark: #212121; // Texto más oscuro para mejor contraste
+$text-light: #fefefe; // Texto blanco puro
+$text-muted-dark: #616161; // Gris medio para metadatos
+$text-muted-light: #bdbdbd; // Gris claro para metadatos sobre fondo oscuro
+$error-color: #ef5350; // Rojo de error más claro
+$white: #fff;
 
-/* ===== Fondo galáctico SOLO detrás ===== */
+// --- Colores Modernizados ---
+$chat-bg: #e8eaf6; // Fondo principal gris azulado muy claro para armonizar con el azul
+$outgoing-bg: #90caf9; // Azul claro para mensajes enviados (fondo del degradado)
+$outgoing-bg-end: #64b5f6; // Azul medio para mensajes enviados (fin del degradado)
+$incoming-bg: #ffffff; // Blanco para mensajes recibidos
+$incoming-bg-end: #f5f5f5; // Gris muy claro para mensajes recibidos (fin del degradado)
+$header-bg: #e3f2fd; // Azul muy claro para cabecera y composer
+$input-bg: #ffffff; // Blanco para input
+$border-color: #e0e0e0; // Borde gris claro
+$sender-name-color: $brand-700; // Nombre remitente azul oscuro
+
+/* ===== Fondo galáctico detrás ===== */
 :host {
   display: block;
   min-height: 100dvh;
@@ -22,174 +36,283 @@ $muted: color.change(#334761, $alpha: 0.78);
   background:
     linear-gradient(
       180deg,
-      // Corregido: Usar color.change para ajustar alpha
-      #{color.change($brand, $alpha: 0.10)} 0%,
-      #{color.change(#000, $alpha: 0.10)} 100%
+      #{color.change($brand, $alpha: .20)} 0%, // Más intensidad al gradiente
+      #{color.change(#000,  $alpha: .20)} 100%
     ),
     url('/assets/img/galaxia.jpeg') center / cover no-repeat;
-  filter: saturate(110%) contrast(105%);
+  filter: saturate(120%) contrast(110%) brightness(90%); // Realza más el fondo
 }
 
-/* ===== Layout ===== */
+/* ===== Layout base ===== */
 .chat { padding: 2rem 1rem 3rem; }
-
 .home-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: .8rem;
 }
-.home-grid > .about-card { grid-column: 4 / span 6; }
-@media (max-width: 1100px) { .home-grid > .about-card { grid-column: 2 / span 10; } }
-@media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
+/* ANCHO AJUSTADO */
+.home-grid > .about-card { grid-column: 5 / span 4; } // Más angosto: 4 de 12 columnas (antes 4 / span 6)
+@media (max-width: 1100px) { .home-grid > .about-card { grid-column: 3 / span 8; } } // Más angosto: 8 de 12 (antes 2 / span 10)
+@media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } } // Se mantiene full-width en móvil
 
-/* ===== Card principal (blue-skin) ===== */
-// Corregido: Usar color.mix en lugar de mix
-$panel-start: color.mix(white, $brand, 92%);
-$panel-end:   color.mix(white, $brand-700, 92%);
+/* ===== Card principal (blue-skin) - Estilo limpio y moderno ===== */
+$panel-start: color.mix(white, $brand, 90%); // Más azulado para el panel
+$panel-end:   color.mix(white, $brand-700, 93%); // Más claro
 
 .blue-skin {
+  position: relative; // Para botones absolutos
   background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
-  // Corregido: Usar color.change para ajustar alpha
-  border: 1px solid #{color.change($brand-700, $alpha: .35)};
-  border-radius: 16px;
-  color: $text-on-blue;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, .30),
-    inset 0 1px 0 rgba(255, 255, 255, .04);
-  padding: 1.25rem 1.25rem 1.5rem;
+  border: 1px solid #{color.change($brand-700, $alpha: .35)}; // Borde más presente
+  border-radius: 20px; // Bordes más redondeados
+  color: $text-dark; // Texto oscuro por defecto
+  box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1), 0 6px 10px -6px rgba(0, 0, 0, 0.08); // Sombra más profunda
+  padding: 0; // Padding lo maneja el contenido
+  overflow: hidden; // Asegura bordes redondeados
 }
 
-/* Título */
-.hero h2 {
-  margin: 0 0 .75rem;
-  font-size: 1.75rem; line-height: 1.2;
-  color: #0f172a; text-shadow: 0 1px 0 rgba(0,0,0,.06);
+/* --- Botón Volver al Home (Estilo consistente) --- */
+.btn-back {
+  position: absolute;
+  top: 1.2rem; // Un poco más abajo
+  left: 1.2rem; // Un poco más a la derecha
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.4rem; // Espacio ligeramente mayor
+  padding: .6rem 1rem; border-radius: 999px; font-weight: 600;
+  text-decoration: none; cursor: pointer; user-select: none;
+  border: 1px solid transparent;
+  transition: transform .15s ease-out, box-shadow .15s ease-out, background .15s ease-out, border-color .15s ease-out, color .15s ease-out;
+  z-index: 10;
+
+  color: $brand-800; // Un azul más oscuro
+  background-color: color.mix(white, $brand, 90%);
+  border-color: color.mix(white, $brand, 75%); // Borde más suave
+
+  &:hover {
+    background-color: color.mix(white, $brand, 80%);
+    border-color: color.mix(white, $brand, 65%);
+    color: $brand-700;
+    transform: translateY(-2px); // Más elevación
+    box-shadow: 0 6px 12px rgba(28, 88, 179, .2); // Sombra más pronunciada
+  }
+  .icon { width: 1.1em; height: 1.1em; }
 }
 
-/* ===== Panel interno claro ===== */
-.stream {
-  // Corregido: Usar color.mix
-  background: color.mix(white, $brand, 96%);
-  // Corregido: Usar color.change
-  border: 1px solid #{color.change($brand-700, $alpha: .25)};
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow:
-    0 22px 38px rgba(0,0,0,.06),
-    0 6px 14px rgba(0,0,0,.05);
+/* --- Botón Limpiar Chat (Estilo consistente con Listados) --- */
+.btn-clear {
+  position: absolute;
+  top: 1.2rem; // Un poco más abajo
+  right: 1.2rem; // Un poco más a la izquierda
+  z-index: 10;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .6rem 1.1rem; border-radius: 8px; font-weight: 600; // Bordes un poco más redondeados
+  text-decoration: none; cursor: pointer; user-select: none;
+  border: 1px solid transparent;
+  transition: background-color .15s ease-out, border-color .15s ease-out, color .15s ease-out, box-shadow .15s ease-out;
+
+  $clear-button-bg: #ffcdd2; // Rojo muy claro, más suave
+  $clear-button-hover: #ef9a9a; // Rojo un poco más oscuro al hover
+  $clear-button-text: #b71c1c; // Rojo oscuro
+
+  background-color: $clear-button-bg;
+  color: $clear-button-text;
+  border-color: color.adjust($clear-button-bg, $lightness: -10%); // Usamos color.adjust
+  font-size: 0.85rem; // Tamaño ligeramente mayor
+
+  &:hover {
+    background-color: $clear-button-hover;
+    border-color: color.adjust($clear-button-hover, $lightness: -10%); // Usamos color.adjust
+    box-shadow: 0 3px 6px rgba(0,0,0,.15); // Sombra más visible
+  }
 }
 
-/* ===== Mensajes ===== */
-.messages {
-  height: 360px; overflow: auto;
-  // Corregido: Usar color.change
-  border: 1px solid #{color.change($brand-700, $alpha: .22)};
-  border-radius: 12px;
-  padding: 12px;
-  // Corregido: Usar color.mix
-  background: color.mix(white, $brand, 98%);
+
+/* ===== Cabecera del Chat ===== */
+.hero.chat-header {
+  text-align: center;
+  padding: 1rem; // Reducido (antes 1.5rem)
+  padding-top: 3.5rem; // Reducido (antes 4.5rem) para menos altura
+  border-bottom: 1px solid #{color.change($border-color, $alpha: .7)}; // Borde más suave
+  background: linear-gradient(180deg, color.mix(white, $brand, 95%) 0%, color.mix(white, $brand, 97%) 100%); // Gradiente sutil
+}
+.chat-header h2 {
+  margin: 0;
+  font-size: 1.4rem; // Fuente un poco más grande
+  font-weight: 700; // Más negrita
+  color: $text-dark;
+}
+
+
+/* ===== Contenedor Principal del Chat (Modernizado) ===== */
+.chat-area {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  height: 65vh; // Ajusta según necesites
+  min-height: 450px;
+  max-height: 750px;
+  background-color: $chat-bg; // Fondo principal gris azulado
 }
 
-/* Burbuja base */
+/* ===== Área de Mensajes ===== */
+.messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.7rem; // Más padding
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem; // Espacio entre mensajes ligeramente mayor
+}
+
+.empty-chat {
+  text-align: center;
+  color: $text-muted-dark;
+  margin: auto;
+  font-style: italic;
+  padding: 2rem;
+  font-size: 1.05rem; // Texto un poco más grande
+}
+
+/* Burbuja de mensaje base */
 .msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 75%; // Ligeramente más ancho
   width: fit-content;
-  max-width: min(70%, 72ch);
-  background: #fff;
-  // Corregido: Usar color.change
-  border: 1px solid #{color.change($brand-700, $alpha: .22)};
-  border-radius: 14px;
-  padding: 10px 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.04);
-}
-.meta {
-  font-size: 12px; color: $muted; display: flex; gap: 8px; align-items: baseline;
-}
-.meta .who { font-weight: 700; }
-.meta .time { opacity: .9; }
-.text { margin-top: 4px; font-size: 15px; }
+  border-radius: 16px; // Más redondeado
+  padding: 0.7rem 1.1rem; // Más padding interno
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Sombra más notoria
+  word-wrap: break-word;
 
-/* Entrantes (izquierda) */
+  .meta {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 0.25rem; // Espacio entre meta y texto
+  }
+  .who {
+    font-size: 0.85rem; // Un poco más grande
+    font-weight: 700; // Más negrita
+    margin-right: auto;
+  }
+
+  .text {
+    font-size: 1rem; // Texto del mensaje ligeramente más grande
+    line-height: 1.45; // Más espacio entre líneas
+    color: $text-dark;
+  }
+  .time {
+    font-size: 0.75rem; // Un poco más grande
+    color: $text-muted-dark;
+    user-select: none;
+    align-self: flex-end;
+    margin-top: 0.3rem; // Separación del texto
+  }
+}
+
+/* Mensajes Recibidos (other) */
 .msg.other {
-  margin-right: auto;
-  background: #fff;
-  border-top-left-radius: 6px;
-  border-top-right-radius: 16px;
+  align-self: flex-start;
+  background: linear-gradient(135deg, $incoming-bg 0%, $incoming-bg-end 100%); // Degradado sutil
+  border: 1px solid #{color.change($border-color, $alpha: .7)}; // Borde más suave
+  border-top-left-radius: 6px; // Esquina recta con un poco de redondeo
+  .meta .who { color: $sender-name-color; } // Nombre en azul oscuro
 }
-.msg.other .meta { justify-content: flex-start; }
 
-/* Mis mensajes (derecha) */
-// Corregido: Usar color.mix
-$msg-me-bg-start: color.mix(#fff, $brand, 85%);
-$msg-me-bg-end:   color.mix(#fff, $brand-700, 88%);
-
+/* Mensajes Enviados (me) */
 .msg.me {
-  margin-left: auto;
-  background: linear-gradient(180deg, $msg-me-bg-start 0%, $msg-me-bg-end 100%);
-  // Corregido: Usar color.change
-  border: 1px solid #{color.change($brand-700, $alpha: .35)};
-  box-shadow: 0 2px 10px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.06);
-  border-top-right-radius: 6px;
-  border-top-left-radius: 16px;
+  align-self: flex-end;
+  background: linear-gradient(135deg, $outgoing-bg 0%, $outgoing-bg-end 100%); // Degradado azul
+  color: $text-dark; // Asegura que el texto siga siendo oscuro para buena legibilidad
+  border: 1px solid #{color.change($outgoing-bg-end, $alpha: .8)}; // Borde más presente
+  border-top-right-radius: 6px; // Esquina recta con un poco de redondeo
+  .meta .who { display: none; }
+  .meta .time { color: color.change($text-muted-dark, $alpha: .8); } // Hora ligeramente más clara para contraste
 }
-.msg.me .meta {
-  justify-content: flex-end;
-  text-align: right;
-}
-.muted { color: $muted; }
 
-/* ===== Composer ===== */
-.composer { display: flex; gap: 10px; margin-top: 12px; }
-.composer input {
-  flex: 1; height: 42px;
-  // Corregido: Usar color.change
-  border: 1px solid #{color.change($brand-700, $alpha: .35)};
-  border-radius: 10px; padding: 0 12px; background: #fff; color: #0f172a;
-  transition: border-color .15s, box-shadow .15s, background .15s;
+
+/* ===== Área de Composición ===== */
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem; // Más espacio entre input y botón
+  padding: 1rem 1.2rem; // Más padding
+  background-color: $header-bg; // Fondo azulado claro
+  border-top: 1px solid #{color.change($brand-700, $alpha: .25)}; // Borde azulado suave
+  box-shadow: 0 -2px 8px rgba(0,0,0,.05); // Sombra sutil hacia arriba
 }
-// Corregido: Usar color.change
-.composer input::placeholder { color: color.change(#334761, $alpha: .6); }
-.composer input:focus {
+
+.composer input[type="text"] {
+  flex-grow: 1;
+  height: 48px; // Un poco más alto
+  border: 1px solid #{color.change($brand-700, $alpha: .4)}; // Borde más pronunciado
+  border-radius: 24px; // Más redondeado
+  padding: 0 1.4rem; // Más padding interno
+  background: $input-bg;
+  color: $text-dark;
+  font-size: 1.05rem; // Texto más grande
   outline: none;
-  // Corregido: Usar color.change
-  border-color: #{color.change($brand-700, $alpha: .85)};
-  box-shadow: 0 0 0 3px #{color.change($brand, $alpha: .18)};
+  transition: border-color .2s ease-in-out, box-shadow .2s ease-in-out;
+
+  &::placeholder { color: $text-muted-dark; }
+
+  &:focus {
+    border-color: $brand; // Borde azul más fuerte al enfocar
+    box-shadow: 0 0 0 4px color.change($brand, $alpha: .2); // Sombra de enfoque más grande
+  }
+  &:disabled {
+      background-color: #eceff1; // Gris claro para disabled
+      cursor: not-allowed;
+      opacity: 0.8;
+  }
 }
 
-/* ===== Botones ===== */
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: .55rem 1rem; border-radius: 999px; font-weight: 700;
-  border: 1px solid transparent; cursor: pointer; user-select: none;
-  transition: transform .12s, background .12s, box-shadow .12s, border-color .12s;
-}
-.btn:active { transform: translateY(1px); }
-.btn[disabled] { opacity: .65; cursor: not-allowed; }
+/* Botón de Enviar Moderno (azul) */
+.btn.btn-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 48px; // Más grande
+  height: 48px; // Más grande
+  padding: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $brand 0%, $brand-700 100%); // Degradado en el botón
+  color: $white;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,.15); // Sombra más prominente
+  transition: all .2s ease-out; // Transición para todos los cambios
 
-.btn.primary {
-  color: #fff;
-  background: linear-gradient(
-    180deg,
-    // Corregido: Usar color.change
-    #{color.change($brand, $alpha: .95)} 0%,
-    #{color.change($brand-700, $alpha: .95)} 100%
-  );
-  // Corregido: Usar color.change
-  border-color: #{color.change($brand-800, $alpha: .9)};
-  box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
-}
-.btn.primary:hover:not([disabled]) {
-  box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
+  .send-icon {
+    width: 1.35rem; // Icono más grande
+    height: 1.35rem;
+  }
+
+  &:hover:not([disabled]) {
+    background: linear-gradient(135deg, $brand-700 0%, $brand 100%); // Degradado inverso al hover
+    box-shadow: 0 6px 15px rgba(0,0,0,.25); // Sombra aún más grande
+    transform: translateY(-1px) scale(1.03); // Ligeramente elevado y un poco más grande
+  }
+    &:disabled {
+      background-color: #a7bedc; // Azul más claro para disabled
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.6;
+    }
 }
 
-/* Error */
-.error { margin-top: 8px; color: #b91c1c; font-weight: 700; }
+/* Mensaje de error */
+.error-message {
+  padding: 0.6rem 1.2rem; // Más padding
+  background-color: color.change($error-color, $alpha: 0.15); // Fondo más presente
+  color: $error-color;
+  font-size: 0.9rem; // Texto un poco más grande
+  font-weight: 600; // Más negrita
+  text-align: center;
+  border-top: 1px solid color.change($error-color, $alpha: 0.3); // Borde superior para separar
+}
 
-/* Salvaguarda por si alguna regla vieja mete transparencia */
+/* Salvaguarda (se mantiene) */
 .home-grid > .about-card.blue-skin {
   opacity: 1 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+
