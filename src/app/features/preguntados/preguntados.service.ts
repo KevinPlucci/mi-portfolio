@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 
-// Tipos para la pregunta, se mantiene igual
-export type Question = { imageUrl: string; correct: string; options: string[] };
+// --- CAMBIO: Añadimos 'countryCode' para poder rastrear las preguntas ---
+export type Question = {
+  imageUrl: string;
+  correct: string;
+  options: string[];
+  countryCode: string; // <-- AÑADIDO
+};
 
-// Nuevo tipo para los países
 type Country = { code: string; name: string };
 
 @Injectable({ providedIn: 'root' })
 export class PreguntadosService {
-  // Lista de países con sus códigos y nombres en español.
-  // Puedes agregar o cambiar los que quieras aquí.
   private readonly ALL_COUNTRIES: Country[] = [
     { code: 'AR', name: 'Argentina' },
     { code: 'ES', name: 'España' },
@@ -33,21 +35,31 @@ export class PreguntadosService {
     { code: 'ZA', name: 'Sudáfrica' },
   ];
 
-  /** Genera una pregunta (1 bandera + 4 opciones de países) */
-  async getQuestion(): Promise<Question> {
-    // 1. Elige 4 países al azar de la lista
-    const picked = this.pickMany(this.ALL_COUNTRIES, 4);
+  // --- CAMBIO: La función ahora acepta un array de códigos para excluir ---
+  async getQuestion(excludeCodes: string[] = []): Promise<Question> {
+    // 1. Filtra los países para usar solo los que no han sido elegidos
+    const availableCountries = this.ALL_COUNTRIES.filter(
+      (c) => !excludeCodes.includes(c.code)
+    );
 
-    // 2. El primero será la respuesta correcta
+    if (availableCountries.length < 4) {
+      throw new Error('No hay suficientes países únicos para continuar.');
+    }
+
+    // 2. Elige 4 países al azar de la lista DISPONIBLE
+    const picked = this.pickMany(availableCountries, 4);
+
     const correctCountry = picked[0];
-
-    // 3. Mezcla los nombres de los 4 países para las opciones
     const options = this.shuffle(picked.map((p) => p.name));
-
-    // 4. Construye la URL de la imagen de la bandera
     const imageUrl = `https://flagsapi.com/${correctCountry.code}/flat/64.png`;
 
-    return { imageUrl: imageUrl, correct: correctCountry.name, options };
+    // 3. Devuelve el objeto incluyendo el 'countryCode'
+    return {
+      imageUrl: imageUrl,
+      correct: correctCountry.name,
+      options,
+      countryCode: correctCountry.code, // <-- AÑADIDO
+    };
   }
 
   /** Helpers (sin cambios) */

@@ -1,8 +1,6 @@
 <section class="ahorcado">
-  <!-- Card principal centrada en grid 12 -->
   <div class="home-grid">
     <div class="about-card blue-skin">
-      <!-- Botón Volver (arriba a la izquierda) -->
       <a routerLink="/juegos" class="btn btn-back">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -21,18 +19,15 @@
 
       <div class="hero">
         <h2>Ahorcado</h2>
-        <!-- Mostramos la racha actual -->
         <p class="streak">Racha actual: <strong>{{ streakScore() }}</strong></p>
       </div>
 
       <div class="grid">
-        <!-- Lado izquierdo: horca -->
         <div class="gallows">
           <div class="base"></div>
           <div class="post"></div>
           <div class="arm"></div>
           <div class="rope"></div>
-          <!-- Dibujo del ahorcado basado en errores() -->
           @if (errores() >= 1) {
           <div class="head"></div>
           } @if (errores() >= 2) {
@@ -48,11 +43,9 @@
           }
         </div>
 
-        <!-- Lado derecho: panel de juego -->
         <div class="panel">
           <p class="mask">{{ mascara }}</p>
 
-          <!-- Teclado: Deshabilitado si no está en estado 'playing' -->
           <div class="kbd">
             @for (l of abecedario; track l) {
             <button
@@ -65,13 +58,15 @@
             }
           </div>
 
-          <!-- Mensajes y Acciones según el estado del juego -->
           <div class="actions">
             @switch (gameState()) { @case ('playing') {
-            <!-- Estado jugando: Muestra errores -->
-            <p class="muted">Errores: {{ errores() }}/{{ maxErrores }}</p>
+            <div class="playing-actions">
+              <p class="muted">Errores: {{ errores() }}/{{ maxErrores }}</p>
+              <button class="btn secondary" (click)="startNewGame()">
+                Reiniciar
+              </button>
+            </div>
             } @case ('won') {
-            <!-- Ganó ronda: Muestra mensaje y opciones -->
             <p class="notice ok">
               ¡Ganaste la ronda! Racha: {{ streakScore() }}. ¿Continuar?
             </p>
@@ -82,7 +77,6 @@
               </button>
             </div>
             } @case ('lost') {
-            <!-- Perdió: Muestra mensaje y opciones -->
             <p class="notice error">
               Perdiste. La palabra era <b>{{ palabra() }}</b>. ¿Nueva partida?
             </p>
@@ -91,7 +85,6 @@
               <button class="btn secondary" (click)="goToHome()">No</button>
             </div>
             } @case ('askNewGame') {
-            <!-- No continuó racha: Pregunta si empieza de cero -->
             <p class="notice info">
               Racha de {{ streakScore() }} guardada. ¿Empezar de cero?
             </p>
@@ -100,7 +93,6 @@
               <button class="btn secondary" (click)="goToHome()">No</button>
             </div>
             } @case ('maxStreak') {
-            <!-- Racha Máxima: Muestra mensaje y botón a Home -->
             <p class="notice ok">
               ¡Felicidades! ¡Alcanzaste la racha máxima de {{ MAX_STREAK }}!
             </p>

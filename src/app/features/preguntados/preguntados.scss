@@ -5,7 +5,17 @@ $brand: #1c58b3;
 $brand-700: color.adjust($brand, $lightness: -12%);
 $brand-800: color.adjust($brand, $lightness: -18%);
 $text-on-blue: #334761f5;
-$muted: color.change($text-on-blue, $alpha: .78);
+$muted: color.change($text-on-blue, $alpha: 0.78);
+
+// Nuevos colores para los botones de la parte inferior
+$reset-button-bg: #e0e0e0; // Un gris claro para el botón de reiniciar
+$reset-button-border: #cccccc;
+$reset-button-hover-bg: #d0d0d0;
+
+$back-button-bg: $brand; // El color principal para "Volver al Inicio"
+$back-button-border: $brand-700;
+$back-button-hover-bg: $brand-700;
+
 
 /* ===== Fondo galáctico SOLO detrás ===== */
 :host {
@@ -16,142 +26,186 @@ $muted: color.change($text-on-blue, $alpha: .78);
 }
 :host::before {
   content: "";
-  position: fixed; inset: 0; z-index: -1;
-  background:
-    linear-gradient(
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
       180deg,
-      #{color.change($brand, $alpha: .10)} 0%,
-      #{color.change(#000,  $alpha: .10)} 100%
+      #{color.change($brand, $alpha: 0.1)} 0%,
+      #{color.change(#000, $alpha: 0.1)} 100%
     ),
-    url('/assets/img/galaxia.jpeg') center / cover no-repeat;
+    url("/assets/img/galaxia.jpeg") center / cover no-repeat;
   filter: saturate(110%) contrast(105%);
 }
 
 /* ===== Contenedor principal ===== */
-.preg { padding: 2rem 1rem 3rem; }
+.preg {
+  padding: 2rem 1rem 3rem;
+}
 
 /* Grid 12 para centrar card como en Quién Soy/Home */
 .home-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  gap: .8rem;
+  gap: 0.8rem;
 }
-.home-grid > .about-card { grid-column: 4 / span 6; }
-@media (max-width: 1100px) { .home-grid > .about-card { grid-column: 2 / span 10; } }
-@media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
+.home-grid > .about-card {
+  grid-column: 4 / span 6;
+}
+@media (max-width: 1100px) {
+  .home-grid > .about-card {
+    grid-column: 2 / span 10;
+  }
+}
+@media (max-width: 720px) {
+  .home-grid > .about-card {
+    grid-column: 1 / -1;
+  }
+}
 
 /* ===== Card principal (blue-skin) ===== */
 $panel-start: color.mix(white, $brand, 92%);
-$panel-end:   color.mix(white, $brand-700, 92%);
+$panel-end: color.mix(white, $brand-700, 92%);
 
 .blue-skin {
   background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
-  border: 1px solid #{color.change($brand-700, $alpha: .35)};
+  border: 1px solid #{color.change($brand-700, $alpha: 0.35)};
   border-radius: 16px;
   color: $text-on-blue;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, .30),
-    inset 0 1px 0 rgba(255, 255, 255, .04);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
   padding: 1.25rem 1.25rem 1.5rem;
 }
 
-.hero { text-align: left; }
+/* Estilo del hero para alinear título y botón "Volver" */
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
 .hero h2 {
-  margin: 0 0 .75rem;
-  font-size: 1.75rem; line-height: 1.2;
-  color: #0f172a; text-shadow: 0 1px 0 rgba(0,0,0,.06);
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  color: #0f172a;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Contenedor para el botón "Volver" en la cabecera */
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 /* Panel interno */
 .panel {
   background: color.mix(white, $brand, 96%);
-  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  border: 1px solid #{color.change($brand-700, $alpha: 0.25)};
   border-radius: 12px;
   padding: 1rem 1rem 1.2rem;
-  box-shadow:
-    0 22px 38px rgba(0,0,0,.06),
-    0 6px 14px rgba(0,0,0,.05);
+  box-shadow: 0 22px 38px rgba(0, 0, 0, 0.06), 0 6px 14px rgba(0, 0, 0, 0.05);
 }
 
 /* Meta / estado */
 .meta {
   text-align: center;
-  opacity: .85;
-  margin-bottom: .75rem;
+  opacity: 0.85;
+  margin-bottom: 0.75rem;
   font-size: 1.05rem;
   color: $muted;
 }
 
 .status-box {
-  min-height: 220px; display: grid; place-items: center;
-  font-size: 1.1rem; color: $muted;
+  min-height: 220px;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+  color: $muted;
 }
 
-/* ===== CONTENEDOR DE LA BANDERA (MODIFICADO) ===== */
+/* ===== CONTENEDOR DE LA BANDERA ===== */
 .flag {
   display: grid;
   place-items: center;
-  margin: .75rem 0 1.25rem;
+  margin: 0.75rem 0 1.25rem;
   background-color: color.mix(white, $brand, 94%);
-  border: 1px solid #{color.change($brand-700, $alpha: .25)};
+  border: 1px solid #{color.change($brand-700, $alpha: 0.25)};
   border-radius: 12px;
-  padding: 1.5rem; /* Aumentamos el padding para que la bandera respire */
-  min-height: 200px; /* Aseguramos una altura mínima consistente */
+  padding: 1.5rem;
+  min-height: 200px;
 }
 
-/* ===== IMAGEN DE LA BANDERA (MODIFICADO) ===== */
+/* ===== IMAGEN DE LA BANDERA ===== */
 .flag img {
-  height: 140px; /* Aumentamos la altura para que sea más visible */
-  width: auto;   /* El ancho se ajusta para mantener la proporción */
-  max-width: 90%; /* Evita que la bandera toque los bordes */
+  height: 140px;
+  width: auto;
+  max-width: 90%;
   border-radius: 8px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2); /* Sombra un poco más notoria */
-  background-color: rgba(255, 255, 255, 0.5); /* Fondo sutil por si hay transparencias */
-  object-fit: contain; /* Asegura que la imagen completa se vea bien */
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.5);
+  object-fit: contain;
 }
-
 
 /* Opciones */
 .options {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: .75rem;
+  gap: 0.75rem;
 }
 .btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: .6rem 1.1rem; border-radius: 999px; font-weight: 700;
-  border: 1px solid transparent; cursor: pointer; user-select: none;
-  transition: transform .12s, background .12s, box-shadow .12s, border-color .12s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.12s, background 0.12s, box-shadow 0.12s,
+    border-color 0.12s;
 }
-.btn:active { transform: translateY(1px); }
-.btn[disabled] { opacity: .65; cursor: not-allowed; }
+.btn:active {
+  transform: translateY(1px);
+}
+.btn[disabled] {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
 .btn.primary {
   color: #fff;
   background: linear-gradient(
     180deg,
-    #{color.change($brand, $alpha: .95)} 0%,
-    #{color.change($brand-700, $alpha: .95)} 100%
+    #{color.change($brand, $alpha: 0.95)} 0%,
+    #{color.change($brand-700, $alpha: 0.95)} 100%
   );
-  border-color: #{color.change($brand-800, $alpha: .9)};
-  box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+  border-color: #{color.change($brand-800, $alpha: 0.9)};
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 .btn.primary:hover:not([disabled]) {
-  box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .btn.secondary {
   color: $text-on-blue;
   background: color.mix(white, $brand, 96%);
-  border: 1px solid #{color.change($brand-700, $alpha: .6)};
+  border: 1px solid #{color.change($brand-700, $alpha: 0.6)};
   border-radius: 999px;
-  padding: .55rem 1rem;
+  padding: 0.55rem 1rem;
   font-weight: 700;
-  box-shadow: 0 8px 18px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    text-decoration: none;
 }
 .btn.secondary:hover:not([disabled]) {
   background: color.mix(white, $brand, 94%);
-  border-color: #{color.change($brand-700, $alpha: .9)};
+  border-color: #{color.change($brand-700, $alpha: 0.9)};
   transform: translateY(-1px);
-  box-shadow: 0 12px 24px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 /* Estados de opción */
@@ -166,23 +220,92 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   color: #fff !important;
 }
 
-/* Feedback */
+/* Feedback (donde están los botones "Siguiente" y "Reiniciar" en una ronda) */
 .feedback {
   margin-top: 1.2rem;
   padding-top: 1.1rem;
-  border-top: 1px solid #{color.change($brand-700, $alpha: .25)};
-  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  border-top: 1px solid #{color.change($brand-700, $alpha: 0.25)};
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Alinea el feedback a la izquierda y los botones a la derecha */
+  gap: 1rem;
 }
-.ok { color: #137333; font-weight: 800; }
-.err { color: #c62828; }
+
+/* Contenedor para los botones "Siguiente" y "Reiniciar" en una ronda */
+.bottom-actions {
+  display: flex;
+  gap: 0.75rem; /* Espacio entre los botones */
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  flex-grow: 1; /* Permite que el contenedor de acciones ocupe el espacio restante */
+}
+
+
+.ok {
+  color: #137333;
+  font-weight: 800;
+}
+.err {
+  color: #c62828;
+}
 
 /* Fin de juego */
-.end-game { padding: 1.4rem 0; text-align: center; }
-.end-game p { font-size: 1.1rem; margin-bottom: 1rem; }
+.end-game {
+  padding: 1.4rem 0;
+  text-align: center;
+}
+.end-game p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
 
 /* Salvaguarda */
 .home-grid > .about-card.blue-skin {
   opacity: 1 !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+
+/* Estilos para los botones de fin de partida (Volver al Inicio y Reiniciar) */
+.end-game-actions {
+  display: flex;
+  justify-content: center; /* Centra los botones horizontalmente */
+  gap: 0.75rem; /* Espacio entre botones */
+  margin-top: 1rem;
+}
+
+/* Estilos específicos para el botón de Reiniciar */
+.btn.secondary.reset-btn {
+  color: $text-on-blue;
+  background: $reset-button-bg;
+  border-color: $reset-button-border;
+}
+
+.btn.secondary.reset-btn:hover:not([disabled]) {
+  background: $reset-button-hover-bg;
+  border-color: $reset-button-border;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el botón "Volver al Inicio" */
+.end-game-actions .btn.primary {
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    $back-button-bg 0%,
+    $back-button-border 100%
+  );
+  border-color: $brand-800;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.end-game-actions .btn.primary:hover:not([disabled]) {
+  background: linear-gradient(
+    180deg,
+    $back-button-hover-bg 0%,
+    $brand-800 100%
+  );
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }

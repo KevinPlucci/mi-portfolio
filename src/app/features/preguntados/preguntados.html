@@ -3,6 +3,9 @@
     <div class="about-card blue-skin">
       <div class="hero">
         <h2>Adivina la Bandera 🌍</h2>
+        <div class="top-actions">
+          <a routerLink="/" class="btn secondary">Volver</a>
+        </div>
       </div>
 
       <div class="panel">
@@ -42,15 +45,25 @@
           } @else {
           <p class="err">Incorrecto. Era <b>{{ q()!.correct }}</b>.</p>
           }
-          <button class="btn secondary" (click)="nextQuestion()">
-            Siguiente
-          </button>
+          <div class="bottom-actions">
+            <button class="btn secondary reset-btn" (click)="reset()">
+              Reiniciar
+            </button>
+            <button class="btn primary" (click)="nextQuestion()">
+              Siguiente
+            </button>
+          </div>
         </div>
         } } } @else {
         <div class="end-game">
           <h3>Partida terminada</h3>
           <p>Puntaje: <b>{{ score() }}</b> / {{ 10 }}</p>
-          <button class="btn primary" (click)="reset()">Jugar de nuevo</button>
+          <div class="end-game-actions">
+            <button class="btn secondary reset-btn" (click)="reset()">
+              Reiniciar
+            </button>
+            <a routerLink="/" class="btn primary">Volver al Inicio</a>
+          </div>
         </div>
         }
       </div>

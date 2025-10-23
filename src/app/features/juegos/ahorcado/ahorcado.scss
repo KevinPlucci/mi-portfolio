@@ -265,3 +265,16 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   -webkit-backdrop-filter: none !important;
 }
 
+/* ===== Estilos para la sección de 'playing' (errores + botón) ===== */
+.playing-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Ajuste para el párrafo de errores dentro del nuevo layout */
+.playing-actions p.muted {
+  text-align: left; /* Quitamos la alineación derecha original */
+  margin: 0; /* Aseguramos que no tenga márgenes */
+}

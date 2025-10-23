@@ -158,7 +158,11 @@ export class AhorcadoComponent {
 
   /** Acción: El usuario elige empezar una nueva partida (racha 0) */
   startNewGame(): void {
-    if (this.gameState() === 'lost' || this.gameState() === 'askNewGame') {
+    if (
+      this.gameState() === 'lost' ||
+      this.gameState() === 'askNewGame' ||
+      this.gameState() === 'playing' // <-- CORRECCIÓN APLICADA AQUÍ
+    ) {
       this.streakScore.set(0); // Asegura que la racha se reinicie
       this.nuevaPartida();
     }

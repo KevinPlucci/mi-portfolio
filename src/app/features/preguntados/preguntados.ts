@@ -6,23 +6,24 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PreguntadosService, Question } from './preguntados.service';
-// Inyectamos los servicios para guardar el puntaje
 import { RankingService } from '../../core/ranking.service';
 import { ResultsService } from '../../core/results.service';
+// --- CAMBIO: Importamos RouterLink para el botón de volver ---
+import { RouterLink } from '@angular/router';
 
 const ROUNDS = 10;
 
 @Component({
   selector: 'app-preguntados',
   standalone: true,
-  imports: [CommonModule],
+  // --- CAMBIO: Añadimos RouterLink a los imports ---
+  imports: [CommonModule, RouterLink],
   templateUrl: './preguntados.html',
   styleUrls: ['./preguntados.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PreguntadosComponent {
   private api = inject(PreguntadosService);
-  // Inyectamos los servicios
   private ranking = inject(RankingService);
   private results = inject(ResultsService);
 
@@ -34,6 +35,9 @@ export class PreguntadosComponent {
   finished = signal(false);
   error = signal<string | null>(null);
 
+  // --- CAMBIO: Array para guardar los códigos de países ya usados en la partida ---
+  private usedCountryCodes: string[] = [];
+
   constructor() {
     this.nextQuestion(true);
   }
@@ -41,9 +45,6 @@ export class PreguntadosComponent {
   async nextQuestion(first = false) {
     if (!first && this.round() >= ROUNDS - 1) {
       this.finished.set(true);
-
-      // --- ¡LÓGICA AÑADIDA! ---
-      // Guardamos el puntaje al finalizar la partida
       try {
         await Promise.all([
           this.ranking.addPoints(this.score()),
@@ -52,8 +53,6 @@ export class PreguntadosComponent {
       } catch (e) {
         console.error('Error al guardar el puntaje:', e);
       }
-      // --- FIN DE LA LÓGICA AÑADIDA ---
-
       return;
     }
 
@@ -65,7 +64,11 @@ export class PreguntadosComponent {
     this.error.set(null);
 
     try {
-      this.q.set(await this.api.getQuestion());
+      // --- CAMBIO: Pasamos la lista de códigos usados al servicio ---
+      const question = await this.api.getQuestion(this.usedCountryCodes);
+      this.q.set(question);
+      // --- CAMBIO: Añadimos el nuevo código a nuestra lista de usados ---
+      this.usedCountryCodes.push(question.countryCode);
     } catch (err) {
       console.error('Error al obtener la pregunta:', err);
       this.error.set('No se pudo cargar la pregunta. ¡Intenta de nuevo!');
@@ -90,6 +93,8 @@ export class PreguntadosComponent {
     this.picked.set(undefined);
     this.finished.set(false);
     this.error.set(null);
+    // --- CAMBIO: Limpiamos la lista de países usados al reiniciar ---
+    this.usedCountryCodes = [];
     this.nextQuestion(true);
   }
 
