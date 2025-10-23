@@ -1,6 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, addDoc, collection } from '@angular/fire/firestore';
-import { serverTimestamp } from 'firebase/firestore';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  serverTimestamp,
+} from '@angular/fire/firestore'; // <-- CAMBIO AQUÍ
+// Eliminamos: import { serverTimestamp } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -12,7 +17,7 @@ export class LogService {
       await addDoc(collection(this.fs, 'loginLogs'), {
         uid: user.uid,
         email: user.email ?? null,
-        fechaIngreso: serverTimestamp(),
+        fechaIngreso: serverTimestamp(), // Ahora usa la función correcta
       });
     } catch (e) {
       console.warn('No se pudo registrar el login:', e);

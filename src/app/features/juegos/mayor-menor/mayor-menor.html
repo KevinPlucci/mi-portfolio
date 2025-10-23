@@ -1,23 +1,49 @@
 <section class="mm">
-  <!-- Card principal centrada en grid 12 (igual a Quién Soy) -->
+  <!-- Card principal centrada -->
   <div class="home-grid">
+    <!-- Corregido: [class]="'home-grid'" a class="home-grid" (no era dinámico) -->
     <div class="about-card blue-skin">
+      <!-- Corregido: [class]="'about-card blue-skin'" a class="..." -->
+
+      <!-- Botón Volver -->
+      <a routerLink="/juegos" class="btn btn-back">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="icon"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span>Volver a Juegos</span>
+      </a>
+
       <div class="hero">
+        <!-- Corregido: [class]="'hero'" a class="hero" -->
         <h2>Mayor o Menor</h2>
       </div>
 
-      <!-- Panel interno claro para el juego -->
+      <!-- Panel interno -->
       <div class="panel">
+        <!-- Corregido: [class]="'panel'" a class="panel" -->
         <!-- Estado de Carga Inicial -->
         @if (loading() && !current()) {
         <div class="status-box">Cargando mazo...</div>
         }
 
-        <!-- Juego en Progreso -->
-        @if (!finished() && current()) {
+        <!-- Juego en Progreso o Terminado -->
+        @if (current()) {
         <div class="game-board">
+          <!-- Corregido: [class]="'game-board'" a class="game-board" -->
           <div class="card-area">
+            <!-- Corregido: [class]="'card-area'" a class="card-area" -->
+            <!-- Carta Actual -->
             <div class="card-box">
+              <!-- Corregido: [class]="'card-box'" a class="card-box" -->
               <p>Carta Actual</p>
               <img
                 [src]="current()?.image"
@@ -26,38 +52,67 @@
               />
             </div>
 
+            <!-- Carta Siguiente (con estructura para Flip) -->
             <div class="card-box next-card-box">
-              <p>Carta Oculta</p>
-
-              @if (next()) {
-              <!-- Tenemos la próxima carta, pero la mostramos boca abajo a menos que se habilite revealNext -->
-              <img
-                [src]="revealNext() ? next()!.image : 'https://deckofcardsapi.com/static/img/back.png'"
-                [alt]="revealNext() ? next()!.code : 'Carta boca abajo'"
-                class="card-img"
-              />
-              } @else if (loading()) {
-              <!-- Mientras roba, mostramos dorso con pulso -->
-              <img
-                src="https://deckofcardsapi.com/static/img/back.png"
-                alt="Carta boca abajo"
-                class="card-img loading"
-              />
-              } @else {
-              <!-- Estado inicial sin next todavía -->
-              <div class="card-placeholder">?</div>
-              }
+              <!-- Corregido: [class]="'card-box next-card-box'" a class="..." -->
+              <p>Carta Siguiente</p>
+              <div class="card-flipper" [class.is-flipped]="revealNext()">
+                <!-- Cara Frontal (la carta real) -->
+                <div class="card-face card-front">
+                  <!-- Corregido: [class]="'card-face card-front'" a class="..." -->
+                  @if (next()) {
+                  <img
+                    [src]="next()!.image"
+                    [alt]="next()!.code"
+                    class="card-img"
+                  />
+                  } @else {
+                  <!-- Placeholder si next es null -->
+                  <div class="card-placeholder-face">?</div>
+                  }
+                </div>
+                <!-- Cara Trasera (dorso) -->
+                <div class="card-face card-back">
+                  <!-- Corregido: [class]="'card-face card-back'" a class="..." -->
+                  @if (loading() && !finished() && !next()) {
+                  <!-- Dorso con pulso mientras roba -->
+                  <img
+                    src="https://deckofcardsapi.com/static/img/back.png"
+                    alt="Cargando..."
+                    class="card-img loading"
+                  />
+                  } @else {
+                  <!-- Dorso normal -->
+                  <img
+                    src="https://deckofcardsapi.com/static/img/back.png"
+                    alt="Carta boca abajo"
+                    class="card-img"
+                  />
+                  }
+                </div>
+              </div>
             </div>
+            <!-- Fin card-box next -->
+          </div>
+          <!-- Fin card-area -->
+
+          <!-- Mensaje de resultado -->
+          <div
+            class="result-message"
+            [class.error]="resultMessage().includes('Incorrecto') || resultMessage().includes('Error')"
+          >
+            {{ resultMessage() || '&nbsp;' }}
           </div>
 
-          <div class="result-message">{{ resultMessage() }}</div>
-
+          <!-- Acciones: Adivinar (solo si no ha terminado) -->
+          @if (!finished()) {
           <div class="actions">
+            <!-- Corregido: [class]="'actions'" a class="actions" -->
             <button
               type="button"
               class="btn primary"
               (click)="guess('menor')"
-              [disabled]="loading()"
+              [disabled]="isGuessing()"
             >
               Menor
             </button>
@@ -65,40 +120,59 @@
               type="button"
               class="btn primary"
               (click)="guess('mayor')"
-              [disabled]="loading()"
+              [disabled]="isGuessing()"
             >
               Mayor
             </button>
           </div>
+          } @else {
+          <!-- Acciones: Fin del juego -->
+          <div class="end-game">
+            <!-- Corregido: [class]="'end-game'" a class="end-game" -->
+            <h3>Partida Terminada</h3>
+            <p>Puntaje Final: <b>{{ score() }}</b> en {{ rounds() }} rondas.</p>
+            <button class="btn primary" type="button" (click)="reset()">
+              Jugar de Nuevo
+            </button>
+          </div>
+          }
         </div>
+        <!-- Fin game-board -->
 
+        <!-- Info (Puntos/Rondas) - Siempre visible bajo el tablero -->
         <div class="game-info">
+          <!-- Corregido: [class]="'game-info'" a class="game-info" -->
           <span>Puntos: <b>{{ score() }}</b></span>
           <span>Rondas: <b>{{ rounds() }}</b></span>
         </div>
 
+        <!-- Botón Reiniciar (solo si no ha terminado) -->
         <div class="footer-actions">
+          <!-- Corregido: [class]="'footer-actions'" a class="footer-actions" -->
+          @if (!finished()) {
           <button
             class="btn secondary reset-btn"
             type="button"
             (click)="reset()"
-            [disabled]="loading()"
+            [disabled]="loading() || isGuessing()"
           >
             <span class="icon" aria-hidden="true">↻</span>
-            Reiniciar
+            Reiniciar Partida
           </button>
+          }
         </div>
-        } @else if (finished()) {
-        <!-- Fin del Juego -->
-        <div class="end-game">
-          <h3>Partida Terminada</h3>
-          <p>Puntaje Final: <b>{{ score() }}</b> en {{ rounds() }} rondas.</p>
-          <button class="btn primary" type="button" (click)="reset()">
-            Jugar de Nuevo
-          </button>
+        } @else if (!loading()) {
+        <!-- Mensaje de error si falló la carga inicial -->
+        <div class="status-box error-box">
+          <!-- Corregido: [class]="'status-box error-box'" a class="..." -->
+          <p>{{ resultMessage() }}</p>
+          <button class="btn secondary" (click)="reset()">Reintentar</button>
         </div>
         }
       </div>
+      <!-- Fin panel -->
     </div>
+    <!-- Fin blue-skin -->
   </div>
+  <!-- Fin home-grid -->
 </section>

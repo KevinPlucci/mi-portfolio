@@ -1,11 +1,13 @@
-/* ===== SIN módulos sass:color ===== */
+@use "sass:color"; // Añadido para usar las funciones de color modernas
 
 /* ===== Tokens del tema ===== */
 $brand: #1c58b3;
-$brand-700: darken($brand, 12%);
-$brand-800: darken($brand, 18%);
-$text-on-blue: #334761f5; // 8-digit hex con alpha
-$muted: rgba(#334761, 0.78);
+// Corregido: Usar color.adjust en lugar de darken
+$brand-700: color.adjust($brand, $lightness: -12%);
+$brand-800: color.adjust($brand, $lightness: -18%);
+$text-on-blue: #334761f5;
+// Corregido: Usar color.change para ajustar alpha
+$muted: color.change(#334761, $alpha: 0.78);
 
 /* ===== Fondo galáctico SOLO detrás ===== */
 :host {
@@ -20,8 +22,9 @@ $muted: rgba(#334761, 0.78);
   background:
     linear-gradient(
       180deg,
-      #{rgba($brand, 0.10)} 0%,
-      #{rgba(#000, 0.10)} 100%
+      // Corregido: Usar color.change para ajustar alpha
+      #{color.change($brand, $alpha: 0.10)} 0%,
+      #{color.change(#000, $alpha: 0.10)} 100%
     ),
     url('/assets/img/galaxia.jpeg') center / cover no-repeat;
   filter: saturate(110%) contrast(105%);
@@ -40,12 +43,14 @@ $muted: rgba(#334761, 0.78);
 @media (max-width: 720px)  { .home-grid > .about-card { grid-column: 1 / -1; } }
 
 /* ===== Card principal (blue-skin) ===== */
-$panel-start: mix(white, $brand, 92%);
-$panel-end:   mix(white, $brand-700, 92%);
+// Corregido: Usar color.mix en lugar de mix
+$panel-start: color.mix(white, $brand, 92%);
+$panel-end:   color.mix(white, $brand-700, 92%);
 
 .blue-skin {
   background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
-  border: 1px solid #{rgba($brand-700, .35)};
+  // Corregido: Usar color.change para ajustar alpha
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
   border-radius: 16px;
   color: $text-on-blue;
   box-shadow:
@@ -63,8 +68,10 @@ $panel-end:   mix(white, $brand-700, 92%);
 
 /* ===== Panel interno claro ===== */
 .stream {
-  background: mix(white, $brand, 96%);
-  border: 1px solid #{rgba($brand-700, .25)};
+  // Corregido: Usar color.mix
+  background: color.mix(white, $brand, 96%);
+  // Corregido: Usar color.change
+  border: 1px solid #{color.change($brand-700, $alpha: .25)};
   border-radius: 12px;
   padding: 1rem;
   box-shadow:
@@ -75,10 +82,12 @@ $panel-end:   mix(white, $brand-700, 92%);
 /* ===== Mensajes ===== */
 .messages {
   height: 360px; overflow: auto;
-  border: 1px solid #{rgba($brand-700, .22)};
+  // Corregido: Usar color.change
+  border: 1px solid #{color.change($brand-700, $alpha: .22)};
   border-radius: 12px;
   padding: 12px;
-  background: mix(white, $brand, 98%);
+  // Corregido: Usar color.mix
+  background: color.mix(white, $brand, 98%);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -89,7 +98,8 @@ $panel-end:   mix(white, $brand-700, 92%);
   width: fit-content;
   max-width: min(70%, 72ch);
   background: #fff;
-  border: 1px solid #{rgba($brand-700, .22)};
+  // Corregido: Usar color.change
+  border: 1px solid #{color.change($brand-700, $alpha: .22)};
   border-radius: 14px;
   padding: 10px 12px;
   box-shadow: 0 2px 6px rgba(0,0,0,.04);
@@ -111,13 +121,15 @@ $panel-end:   mix(white, $brand-700, 92%);
 .msg.other .meta { justify-content: flex-start; }
 
 /* Mis mensajes (derecha) */
-$msg-me-bg-start: mix(#fff, $brand, 85%);
-$msg-me-bg-end:   mix(#fff, $brand-700, 88%);
+// Corregido: Usar color.mix
+$msg-me-bg-start: color.mix(#fff, $brand, 85%);
+$msg-me-bg-end:   color.mix(#fff, $brand-700, 88%);
 
 .msg.me {
   margin-left: auto;
   background: linear-gradient(180deg, $msg-me-bg-start 0%, $msg-me-bg-end 100%);
-  border: 1px solid #{rgba($brand-700, .35)};
+  // Corregido: Usar color.change
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
   box-shadow: 0 2px 10px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.06);
   border-top-right-radius: 6px;
   border-top-left-radius: 16px;
@@ -132,15 +144,18 @@ $msg-me-bg-end:   mix(#fff, $brand-700, 88%);
 .composer { display: flex; gap: 10px; margin-top: 12px; }
 .composer input {
   flex: 1; height: 42px;
-  border: 1px solid #{rgba($brand-700, .35)};
+  // Corregido: Usar color.change
+  border: 1px solid #{color.change($brand-700, $alpha: .35)};
   border-radius: 10px; padding: 0 12px; background: #fff; color: #0f172a;
   transition: border-color .15s, box-shadow .15s, background .15s;
 }
-.composer input::placeholder { color: rgba(#334761, .6); }
+// Corregido: Usar color.change
+.composer input::placeholder { color: color.change(#334761, $alpha: .6); }
 .composer input:focus {
   outline: none;
-  border-color: #{rgba($brand-700, .85)};
-  box-shadow: 0 0 0 3px #{rgba($brand, .18)};
+  // Corregido: Usar color.change
+  border-color: #{color.change($brand-700, $alpha: .85)};
+  box-shadow: 0 0 0 3px #{color.change($brand, $alpha: .18)};
 }
 
 /* ===== Botones ===== */
@@ -157,10 +172,12 @@ $msg-me-bg-end:   mix(#fff, $brand-700, 88%);
   color: #fff;
   background: linear-gradient(
     180deg,
-    #{rgba($brand, .95)} 0%,
-    #{rgba($brand-700, .95)} 100%
+    // Corregido: Usar color.change
+    #{color.change($brand, $alpha: .95)} 0%,
+    #{color.change($brand-700, $alpha: .95)} 100%
   );
-  border-color: #{rgba($brand-800, .9)};
+  // Corregido: Usar color.change
+  border-color: #{color.change($brand-800, $alpha: .9)};
   box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
 }
 .btn.primary:hover:not([disabled]) {

@@ -6,6 +6,10 @@ $brand-700: color.adjust($brand, $lightness: -12%);
 $brand-800: color.adjust($brand, $lightness: -18%);
 $text-on-blue: #334761f5;
 $muted: color.change($text-on-blue, $alpha: .78);
+// Colores resultado
+$success-color: #16a34a;
+$error-color: #dc2626;
+
 
 /* ===== Fondo galáctico SOLO detrás ===== */
 :host {
@@ -45,6 +49,7 @@ $panel-start: color.mix(white, $brand, 92%);
 $panel-end:   color.mix(white, $brand-700, 92%);
 
 .blue-skin {
+  position: relative; // Para posicionar el botón Volver
   background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
   border: 1px solid #{color.change($brand-700, $alpha: .35)};
   border-radius: 16px;
@@ -55,8 +60,43 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   padding: 1.25rem 1.25rem 1.5rem;
 }
 
+/* --- Botón Volver (copiado de Ahorcado) --- */
+.btn-back {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.3rem;
+  padding: .5rem .9rem; border-radius: 999px; font-weight: 700;
+  text-decoration: none; cursor: pointer; user-select: none;
+  border: 1px solid transparent;
+  transition: transform .12s, box-shadow .12s, background .12s, border-color .12s;
+  z-index: 2; // Asegura que esté sobre el contenido
+
+  // Estilo destacado
+  color: #fff;
+  background: linear-gradient(180deg, color.adjust($brand, $lightness: 5%) 0%, color.adjust($brand, $lightness: -5%) 100%);
+  border-color: #{color.change($brand-800, $alpha: .8)};
+  box-shadow: 0 8px 18px rgba(28, 88, 179, .35), inset 0 1px 0 rgba(255,255,255,.1);
+
+  &:hover {
+    background: linear-gradient(180deg, color.adjust($brand, $lightness: 8%) 0%, color.adjust($brand, $lightness: -2%) 100%);
+    border-color: #{color.change($brand-800, $alpha: 1)};
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(28, 88, 179, .45), inset 0 1px 0 rgba(255,255,255,.15);
+  }
+
+  .icon {
+    width: 1.1em;
+    height: 1.1em;
+  }
+}
+
 /* ===== Título ===== */
-.hero { text-align: left; }
+.hero {
+  text-align: center; /* Centramos título */
+  padding-top: 1.5rem; /* Espacio para el botón Volver */
+}
 .hero h2 {
   margin: 0 0 .75rem;
   font-size: 1.75rem; line-height: 1.2;
@@ -83,35 +123,82 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   align-items: flex-start;
   gap: 2rem;
   margin-bottom: 1.2rem;
+  perspective: 1000px; // Necesario para el efecto 3D del flip
 }
 
+.card-box { text-align: center; } // Centrar texto y carta
 .card-box p {
   margin: 0 0 .5rem;
   font-weight: 600;
   color: $muted;
 }
 
+/* --- Estilos Base de la Imagen de Carta --- */
 .card-img {
+  display: block; // Evita espacio extra debajo
   width: 140px; height: auto;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,.15);
 }
-.card-img.loading { animation: pulse 1.5s infinite; }
 
-.card-placeholder {
-  width: 138px; height: 193px;
-  border: 3px dashed #{color.change($brand-700, $alpha: .25)};
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 4rem; color: #{color.change($brand-700, $alpha: .25)};
-  font-weight: 800;
+/* --- Estilos para la Animación de Flip --- */
+.card-flipper {
+  width: 140px; /* Igual a .card-img */
+  height: 195px; /* Altura aprox de la carta, ajusta si es necesario */
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s; // Duración del volteo
 }
 
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden; /* Oculta la cara trasera mientras gira */
+  border-radius: 8px; /* Para que las caras tengan bordes redondeados */
+  overflow: hidden; /* Asegura que la imagen no se salga */
+}
+
+.card-front {
+  transform: rotateY(180deg); // La cara frontal empieza girada
+}
+
+.card-back {
+  // La cara trasera está normal al inicio
+  transform: rotateY(0deg);
+}
+
+/* Clase que activa la animación */
+.card-flipper.is-flipped {
+  transform: rotateY(180deg); // Gira el contenedor para mostrar la cara frontal
+}
+
+/* Placeholder si no hay imagen (dentro de card-front) */
+.card-placeholder-face {
+   width: 100%; height: 100%;
+   border: 3px dashed #{color.change($brand-700, $alpha: .25)};
+   border-radius: 8px;
+   display: flex; align-items: center; justify-content: center;
+   font-size: 4rem; color: #{color.change($brand-700, $alpha: .25)};
+   font-weight: 800;
+   background: color.mix(white, $brand, 98%);
+}
+
+/* Animación de pulso para el dorso mientras carga */
+.card-img.loading { animation: pulse 1.5s infinite; }
+
+
+/* --- Fin Estilos Flip --- */
+
+
 .result-message {
-  min-height: 24px;
+  min-height: 24px; // Para evitar saltos
   margin-bottom: 1rem;
   font-size: 1.1rem;
   font-weight: 700;
+  text-align: center; // Centrar mensaje
+  color: $success-color; // Color verde por defecto
+  &.error { color: $error-color; } // Rojo si contiene 'Incorrecto'
 }
 
 /* ===== Botones de juego ===== */
@@ -143,14 +230,14 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 /* Info */
 .game-info {
   display: flex; justify-content: center; gap: 2rem;
-  font-size: 1rem; margin-bottom: .5rem;
+  font-size: 1rem; margin-bottom: 1.5rem; // Más espacio inferior
 }
 
-/* ===== Botón Reiniciar “lindo” ===== */
+/* ===== Botón Reiniciar ===== */
 .footer-actions {
   display: flex;
   justify-content: center;
-  margin-top: .25rem;
+  margin-top: .5rem; // Reducimos espacio superior
 }
 
 .btn.secondary {
@@ -187,11 +274,18 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 
 /* Estado final / carga */
 .end-game { padding: 1.4rem 0; text-align: center; }
+.end-game h3 {
+   margin: 0 0 .5rem;
+   font-size: 1.5rem;
+   color: #0f172a;
+}
 .end-game p { font-size: 1.1rem; margin-bottom: 1rem; }
 
 .status-box {
-  min-height: 200px; display: flex; align-items: center; justify-content: center;
+  min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem;
   font-size: 1.1rem; color: $muted;
+  &.error-box { color: $error-color; }
 }
 
 @keyframes pulse {
@@ -205,3 +299,4 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+

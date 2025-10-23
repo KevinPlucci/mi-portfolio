@@ -2,8 +2,27 @@
   <!-- Card principal centrada en grid 12 -->
   <div class="home-grid">
     <div class="about-card blue-skin">
+      <!-- Botón Volver (arriba a la izquierda) -->
+      <a routerLink="/juegos" class="btn btn-back">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="icon"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span>Volver a Juegos</span>
+      </a>
+
       <div class="hero">
         <h2>Ahorcado</h2>
+        <!-- Mostramos la racha actual -->
+        <p class="streak">Racha actual: <strong>{{ streakScore() }}</strong></p>
       </div>
 
       <div class="grid">
@@ -13,18 +32,18 @@
           <div class="post"></div>
           <div class="arm"></div>
           <div class="rope"></div>
-
-          @if (errores >= 1) {
+          <!-- Dibujo del ahorcado basado en errores() -->
+          @if (errores() >= 1) {
           <div class="head"></div>
-          } @if (errores >= 2) {
+          } @if (errores() >= 2) {
           <div class="body"></div>
-          } @if (errores >= 3) {
+          } @if (errores() >= 3) {
           <div class="arm-l"></div>
-          } @if (errores >= 4) {
+          } @if (errores() >= 4) {
           <div class="arm-r"></div>
-          } @if (errores >= 5) {
+          } @if (errores() >= 5) {
           <div class="leg-l"></div>
-          } @if (errores >= 6) {
+          } @if (errores() >= 6) {
           <div class="leg-r"></div>
           }
         </div>
@@ -33,11 +52,12 @@
         <div class="panel">
           <p class="mask">{{ mascara }}</p>
 
+          <!-- Teclado: Deshabilitado si no está en estado 'playing' -->
           <div class="kbd">
             @for (l of abecedario; track l) {
             <button
               class="key"
-              [disabled]="elegidas.has(l) || gano || perdio"
+              [disabled]="gameState() !== 'playing' || elegidas().has(l)"
               (click)="elegir(l)"
             >
               {{ l }}
@@ -45,19 +65,47 @@
             }
           </div>
 
-          @if (gano) {
-          <p class="notice ok">¡Ganaste! +1 punto</p>
-          } @if (perdio) {
-          <p class="notice error">
-            Perdiste. La palabra era <b>{{ palabra }}</b>
-          </p>
-          }
-
+          <!-- Mensajes y Acciones según el estado del juego -->
           <div class="actions">
-            <button class="btn primary" (click)="nuevaPartida()">
-              Nueva partida
-            </button>
-            <p class="muted">Errores: {{ errores }}/{{ maxErrores }}</p>
+            @switch (gameState()) { @case ('playing') {
+            <!-- Estado jugando: Muestra errores -->
+            <p class="muted">Errores: {{ errores() }}/{{ maxErrores }}</p>
+            } @case ('won') {
+            <!-- Ganó ronda: Muestra mensaje y opciones -->
+            <p class="notice ok">
+              ¡Ganaste la ronda! Racha: {{ streakScore() }}. ¿Continuar?
+            </p>
+            <div class="button-group">
+              <button class="btn primary" (click)="continueStreak()">Sí</button>
+              <button class="btn secondary" (click)="endStreakAndAskNewGame()">
+                No
+              </button>
+            </div>
+            } @case ('lost') {
+            <!-- Perdió: Muestra mensaje y opciones -->
+            <p class="notice error">
+              Perdiste. La palabra era <b>{{ palabra() }}</b>. ¿Nueva partida?
+            </p>
+            <div class="button-group">
+              <button class="btn primary" (click)="startNewGame()">Sí</button>
+              <button class="btn secondary" (click)="goToHome()">No</button>
+            </div>
+            } @case ('askNewGame') {
+            <!-- No continuó racha: Pregunta si empieza de cero -->
+            <p class="notice info">
+              Racha de {{ streakScore() }} guardada. ¿Empezar de cero?
+            </p>
+            <div class="button-group">
+              <button class="btn primary" (click)="startNewGame()">Sí</button>
+              <button class="btn secondary" (click)="goToHome()">No</button>
+            </div>
+            } @case ('maxStreak') {
+            <!-- Racha Máxima: Muestra mensaje y botón a Home -->
+            <p class="notice ok">
+              ¡Felicidades! ¡Alcanzaste la racha máxima de {{ MAX_STREAK }}!
+            </p>
+            <button class="btn primary" (click)="goToHome()">Ir al Home</button>
+            } }
           </div>
         </div>
       </div>

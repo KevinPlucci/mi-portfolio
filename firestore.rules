@@ -1,4 +1,3 @@
-// firestore.rules (completo, con permisos para admins y guard)
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -12,29 +11,40 @@ service cloud.firestore {
     match /ranking/{uid} {
       allow read: if true;
       allow create, update: if request.auth != null
-                            && request.auth.uid == uid
-                            && request.resource.data.uid == uid;
-      allow delete: if false;
+                              && request.auth.uid == uid
+                              && request.resource.data.uid == uid;
+      // --- AÑADIDO: Permitir borrar solo a admins ---
+      allow delete: if request.auth != null && (
+                      request.auth.token.admin == true ||
+                      exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+                    );
+      // --- FIN AÑADIDO ---
     }
 
     match /resultados/{docId} {
-      allow read: if true;
+      allow read: if true; // Permitir lectura a todos (para tablas)
       allow create: if request.auth != null
-                    && request.resource.data.uid == request.auth.uid;
-      allow update, delete: if false;
+                      && request.resource.data.uid == request.auth.uid;
+      // --- AÑADIDO: Permitir borrar solo a admins ---
+      allow delete: if request.auth != null && (
+                      request.auth.token.admin == true ||
+                      exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+                    );
+      // --- FIN AÑADIDO ---
+       allow update: if false; // Generalmente no se actualizan resultados individuales
     }
 
-    // Encuestas: lectura SOLO admin (por claim o por doc /admins/{uid})
+    // Encuestas: create para usuarios, read/delete para admin
     match /encuestas/{docId} {
       allow create: if request.auth != null
-                    && request.resource.data.uid == request.auth.uid;
-
-      allow read: if request.auth != null && (
-        request.auth.token.admin == true ||
-        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
-      );
-
-      allow update, delete: if false;
+                      && request.resource.data.uid == request.auth.uid;
+      // --- ACTUALIZADO: Añadido delete a la regla de admin ---
+      allow read, delete: if request.auth != null && (
+                      request.auth.token.admin == true ||
+                      exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+                    );
+      // --- FIN ACTUALIZADO ---
+      allow update: if false;
     }
 
     // Colección de admins (para el guard)
@@ -46,7 +56,7 @@ service cloud.firestore {
 
     match /loginLogs/{docId} {
       allow create: if request.auth != null
-                    && request.resource.data.uid == request.auth.uid;
+                      && request.resource.data.uid == request.auth.uid;
       allow read, update, delete: if false;
     }
   }

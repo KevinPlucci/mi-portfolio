@@ -6,11 +6,22 @@ $brand-700: color.adjust($brand, $lightness: -12%);
 $brand-800: color.adjust($brand, $lightness: -18%);
 $text-on-blue: #334761f5;
 $muted: color.change($text-on-blue, $alpha: .78);
+// Colores para mensajes
+$success-bg: color.change(#7ee787, $alpha: .12);
+$success-border: color.change(#7ee787, $alpha: .6);
+$success-text: #2f7d32;
+$error-bg: color.change(#f85149, $alpha: .12);
+$error-border: color.change(#f85149, $alpha: .6);
+$error-text: #c62828; // Más oscuro que el borde
+$info-bg: color.change($brand, $alpha: .10);
+$info-border: color.change($brand-700, $alpha: .5);
+$info-text: $brand;
+
 
 /* ===== Fondo galáctico detrás ===== */
 :host {
   display: block;
-  min-height: 100dvh;
+  min-height: 100dvh; // Asegura que ocupe toda la altura
   position: relative;
   isolation: isolate;
 }
@@ -30,7 +41,7 @@ $muted: color.change($text-on-blue, $alpha: .78);
 /* ===== Layout base ===== */
 .ahorcado { padding: 2rem 1rem 3rem; }
 
-/* Grid 12 para centrar card como en las demás páginas */
+/* Grid 12 para centrar card */
 .home-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -45,6 +56,7 @@ $panel-start: color.mix(white, $brand, 92%);
 $panel-end:   color.mix(white, $brand-700, 92%);
 
 .blue-skin {
+  position: relative; // Para posicionar el botón Volver
   background: linear-gradient(180deg, $panel-start 0%, $panel-end 100%);
   border: 1px solid #{color.change($brand-700, $alpha: .35)};
   border-radius: 16px;
@@ -55,11 +67,55 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   padding: 1.25rem 1.25rem 1.5rem;
 }
 
+/* --- Botón Volver --- */
+.btn-back {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 0.3rem;
+  padding: .5rem .9rem; border-radius: 999px; font-weight: 700;
+  text-decoration: none; cursor: pointer; user-select: none;
+  border: 1px solid transparent;
+  transition: transform .12s, box-shadow .12s, background .12s, border-color .12s;
+
+  // Nuevo estilo más destacado para el botón de volver
+  color: #fff; // Texto blanco
+  background: linear-gradient(180deg, lighten($brand, 5%) 0%, darken($brand, 5%) 100%); // Gradiente azul
+  border-color: #{color.change($brand-800, $alpha: .8)}; // Borde oscuro
+  box-shadow: 0 8px 18px rgba(28, 88, 179, .35), /* Sombra azulada */
+              inset 0 1px 0 rgba(255,255,255,.1);
+
+  &:hover {
+    background: linear-gradient(180deg, lighten($brand, 8%) 0%, darken($brand, 2%) 100%);
+    border-color: #{color.change($brand-800, $alpha: 1)};
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(28, 88, 179, .45), /* Sombra más pronunciada */
+                inset 0 1px 0 rgba(255,255,255,.15);
+  }
+
+  .icon {
+    width: 1.1em;
+    height: 1.1em;
+  }
+}
+
+.hero {
+  text-align: center; /* Centramos título y racha */
+  padding-top: 1.5rem; /* Espacio para el botón Volver */
+}
 .hero h2 {
-  margin: 0 0 .75rem;
+  margin: 0 0 .5rem; // Menos margen inferior
   font-size: 1.75rem; line-height: 1.2;
   color: #0f172a; text-shadow: 0 1px 0 rgba(0,0,0,.06);
 }
+.streak {
+  font-size: 1rem;
+  color: $muted;
+  margin: 0 0 .75rem;
+  strong { color: $text-on-blue; font-weight: 700; }
+}
+
 
 /* ===== Grid interno (horca + panel) ===== */
 .grid {
@@ -67,9 +123,12 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   grid-template-columns: 320px 1fr;
   gap: 1rem;
 }
-@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+  .gallows { margin-bottom: 1rem; } // Espacio si se apilan
+}
 
-/* ===== Horca (panel claro, piezas en gris oscuro) ===== */
+/* ===== Horca (sin cambios) ===== */
 .gallows {
   position: relative;
   height: 340px;
@@ -84,7 +143,6 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 .post { position: absolute; bottom: 28px; left: 90px;  width: 12px; height: 258px; background: #737373; border-radius: 3px; }
 .arm  { position: absolute; top: 36px; left: 96px; width: 156px; height: 10px; background: #737373; border-radius: 3px; }
 .rope { position: absolute; top: 46px; left: 232px; width: 2px;  height: 46px; background: #9ca3af; }
-
 .head { position: absolute; top: 98px; left: 216px; width: 32px; height: 32px; border: 3px solid #1f2937; border-radius: 50%; }
 .body { position: absolute; top: 132px; left: 232px; width: 2px;  height: 64px; background: #1f2937; }
 .arm-l { position: absolute; top: 148px; left: 232px; width: 44px; height: 2px; background: #1f2937; transform-origin: left;  transform: rotate(155deg); }
@@ -94,6 +152,8 @@ $panel-end:   color.mix(white, $brand-700, 92%);
 
 /* ===== Panel derecho ===== */
 .panel {
+  display: flex; /* Para controlar el orden y espacio */
+  flex-direction: column;
   background: color.mix(white, $brand, 96%);
   border: 1px solid #{color.change($brand-700, $alpha: .25)};
   border-radius: 12px;
@@ -107,19 +167,18 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   font: 700 1.7rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace;
   letter-spacing: .12rem;
   color: #0f172a;
-  text-align: center; /* Centramos la palabra para que se vea mejor */
-  word-break: break-all; /* Evita que palabras largas rompan el layout */
+  text-align: center; /* Centramos la palabra */
+  word-break: break-all;
+  min-height: 1.2em * 1.7; /* Espacio para dos líneas si se parte */
 }
 
-/* ===== Teclado (CORREGIDO) ===== */
+/* Teclado */
 .kbd {
   display: grid;
-  /* Usamos auto-fill para que las teclas se reorganicen automáticamente si no hay espacio */
   grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-  gap: .5rem; /* Aumentamos el espacio para que respire */
+  gap: .5rem;
   margin: 1rem 0;
 }
-
 .key {
   padding: .45rem .5rem;
   background: #fff;
@@ -130,52 +189,74 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   cursor: pointer;
   transition: background .12s, border-color .12s, transform .06s, box-shadow .12s;
   font-weight: 500;
+  &:hover { background: color.mix(white, $brand, 96%); border-color: #{color.change($brand-700, $alpha: .8)}; transform: translateY(-1px); }
+  &:active { transform: translateY(0); }
+  &:focus-visible { outline: none; box-shadow: 0 0 0 3px #{color.change($brand, $alpha: .20)}; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
 }
-.key:hover { background: color.mix(white, $brand, 96%); border-color: #{color.change($brand-700, $alpha: .8)}; transform: translateY(-1px); }
-.key:active { transform: translateY(0); }
-.key:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px #{color.change($brand, $alpha: .20)};
+
+/* Acciones y mensajes */
+.actions {
+  margin-top: auto; /* Empuja al fondo del panel flex */
+  padding-top: 1rem; /* Espacio sobre los mensajes/botones */
+  border-top: 1px solid #{color.change($brand-700, $alpha: .20)}; /* Línea divisoria */
+  min-height: 60px; /* Altura mínima para evitar saltos de layout */
+
+  /* Estilos para el texto de errores cuando está jugando */
+  p.muted {
+    text-align: right;
+    color: $muted;
+  }
 }
-.key:disabled { opacity: .5; cursor: not-allowed; }
 
-/* Acciones + mensajes */
-.actions { display: flex; align-items: center; justify-content: space-between; gap: .8rem; margin-top: .8rem; }
-.muted { color: $muted; }
-
+/* Mensajes de notificación (Ganaste/Perdiste/Info) */
 .notice {
-  margin: .35rem 0 .5rem;
-  padding: .55rem .75rem;
+  margin: 0 0 .8rem; /* Margen inferior cuando aparece */
+  padding: .6rem .8rem;
   border-radius: 10px;
   border: 1px solid transparent;
-  font-weight: 700;
+  font-weight: 600; /* Un poco menos fuerte que el h2 */
+  text-align: center;
 }
-.notice.ok {
-  background: color.change(#7ee787, $alpha: .12);
-  border-color: color.change(#7ee787, $alpha: .6);
-  color: #2f7d32;
-}
-.notice.error {
-  background: color.change(#f85149, $alpha: .12);
-  border-color: color.change(#f85149, $alpha: .6);
-  color: #f85149;
+.notice.ok { background: $success-bg; border-color: $success-border; color: $success-text; }
+.notice.error { background: $error-bg; border-color: $error-border; color: $error-text; }
+.notice.info { background: $info-bg; border-color: $info-border; color: $info-text; }
+
+
+/* Grupo de botones para las decisiones Sí/No */
+.button-group {
+  display: flex;
+  justify-content: center; /* Centra los botones */
+  gap: .8rem;
 }
 
-/* Botón primario (igual al resto del sitio) */
+/* Botones genéricos (igual a otros botones del sitio) */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: .55rem 1rem; border-radius: 999px; font-weight: 700;
+  padding: .6rem 1.2rem; border-radius: 999px; font-weight: 700;
   text-decoration: none; cursor: pointer; user-select: none;
   border: 1px solid transparent;
   transition: transform .12s, box-shadow .12s, background .12s, border-color .12s;
 }
-.btn.primary {
+.btn.primary { /* Botón principal (Sí, Ir al Home) */
   color: #fff;
   background: linear-gradient(180deg, #{color.change($brand, $alpha: .95)} 0%, #{color.change($brand-700, $alpha: .95)} 100%);
   border-color: #{color.change($brand-800, $alpha: .9)};
   box-shadow: 0 8px 18px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+  &:hover { box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10); }
 }
-.btn.primary:hover { box-shadow: 0 10px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10); }
+.btn.secondary { /* Botón secundario (No) */
+   color: $text-on-blue;
+  background: color.mix(white, $brand, 96%);
+  border: 1px solid #{color.change($brand-700, $alpha: .6)};
+  box-shadow: 0 8px 18px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.06);
+  &:hover {
+    background: color.mix(white, $brand, 94%);
+    border-color: #{color.change($brand-700, $alpha: .9)};
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(0,0,0,.14), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+}
 
 /* Safeguard */
 .home-grid > .about-card.blue-skin {
@@ -183,3 +264,4 @@ $panel-end:   color.mix(white, $brand-700, 92%);
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+

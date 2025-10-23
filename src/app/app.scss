@@ -366,40 +366,18 @@ $text-muted: #e9ecef;
 }
 
 
-/* =================================================
-  CÓDIGO PARA EL SCROLL FIJO (AHORA CON CENTRADO)
-=================================================
+/* ==========================================================
+  ELIMINAMOS EL CÓDIGO PARA EL SCROLL FIJO Y EL CENTRADO
+==========================================================
 */
 
-/* Estilo base de la página (el que ya tenías) */
+/* Estilo base de la página (restaurado) */
 .page {
   padding: 24px 16px;
   padding-top: calc(4rem + 24px); /* 4rem navbar + 24px padding */
   min-height: calc(100vh - 4rem); /* Asegura que la página ocupe al menos el alto de la pantalla */
 }
 
-/* Esta nueva clase se aplicará dinámicamente
-  a las rutas que especificaste (juegos, chat, home, etc.)
+/* Se eliminaron las reglas:
+  .page.is-fixed-page { ... }
 */
-.page.is-fixed-page {
-  height: calc(100vh - 4rem); /* Fija la altura al 100% de la pantalla (menos la navbar) */
-  overflow: hidden; /* ¡Esconde el scrollbar! */
-  padding: 0; /* Quita el padding global para que el componente hijo (ej: chat) ocupe todo el espacio */
-
-  /* --- CAMBIOS PARA CENTRAR VERTICALMENTE --- */
-  display: flex;             /* 1. Convierte en contenedor flex */
-  flex-direction: column;    /* 2. Asegura que el contenido fluya verticalmente (por si acaso) */
-  align-items: center;       /* 3. Centra horizontalmente el contenido hijo */
-  justify-content: center;   /* 4. Centra verticalmente el contenido hijo */
-}
-
-/* Opcional: Si el contenido DENTRO de la página fija necesita scroll (como el chat)
-   puedes añadir estilos específicos para el componente hijo.
-   Por ejemplo, si el componente del chat tiene un selector 'app-chat':
-*/
-.page.is-fixed-page > app-chat {
-  width: 100%; /* Ocupa el ancho disponible */
-  height: 100%; /* Ocupa el alto disponible */
-  /* El componente chat manejaría su propio scroll interno */
-}
-

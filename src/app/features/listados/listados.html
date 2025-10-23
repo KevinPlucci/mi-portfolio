@@ -1,74 +1,322 @@
 <section class="listados">
-  <!-- Card principal centrada en grid 12 -->
+  <!-- Card principal centrada -->
   <div class="home-grid">
     <div class="about-card blue-skin">
+      <!-- Botón Volver al Home -->
+      <button (click)="goHome()" class="btn btn-back">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          class="icon"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 10.707V16.5a1.5 1.5 0 01-1.5 1.5h-3.5a.5.5 0 01-.5-.5v-4.5a.5.5 0 00-.5-.5h-2a.5.5 0 00-.5.5V17a.5.5 0 01-.5.5H5a1.5 1.5 0 01-1.5-1.5V10.707a1 1 0 01.293-.707l7-7z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span>Volver al Home</span>
+      </button>
+
       <div class="hero">
-        <h2>Ranking</h2>
+        <h2>Listados y Rankings</h2>
       </div>
 
-      <div class="panel">
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Email</th>
-                <th>Puntos</th>
-                <th>Última vez</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (it of ranking$ | async; track it.id; let i = $index) {
-              <tr>
-                <td>{{ i + 1 }}</td>
-                <td class="break">{{ it.email || it.uid }}</td>
-                <td>{{ it.puntos || 0 }}</td>
-                <td>
-                  @if (it.updatedAt?.toDate) { {{ it.updatedAt.toDate() |
-                  date:'short' }} }
-                </td>
-              </tr>
-              } @empty {
-              <tr>
-                <td colspan="4" class="empty">No hay puntajes aún</td>
-              </tr>
-              }
-            </tbody>
-          </table>
+      <!-- Contenido principal -->
+      <div>
+        <!-- 1. Ranking General -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Ranking General</h3>
+            <!-- Botón Limpiar solo para Admin -->
+            @if(isAdmin$ | async){
+            <button class="btn btn-clear" (click)="clearRanking()">
+              Limpiar
+            </button>
+            }
+          </div>
+          <div class="table-wrap">
+            <table class="table modern-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Puntos Totales</th>
+                  <th>Última vez</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (it of rankingGeneral$ | async; track it.id; let i =
+                $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td class="break">{{ it.email || it.uid }}</td>
+                  <td>{{ it.puntos || 0 }}</td>
+                  <td>
+                    <!-- Corregimos formato de fecha -->
+                    @if (it.updatedAt?.toDate) { {{ it.updatedAt.toDate() |
+                    date:'dd/MM/yyyy hh:mm a' }} } @else { - }
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="empty">
+                    No hay puntajes generales aún
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <h2 class="mt">Resultados recientes</h2>
-
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Juego</th>
-                <th>Email</th>
-                <th>Puntaje</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (r of resultados$ | async; track r.id) {
-              <tr>
-                <td>
-                  @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() |
-                  date:'short' }} }
-                </td>
-                <td>{{ r.juego }}</td>
-                <td class="break">{{ r.email || r.uid }}</td>
-                <td>{{ r.puntos }}</td>
-              </tr>
-              } @empty {
-              <tr>
-                <td colspan="4" class="empty">Sin partidas registradas</td>
-              </tr>
-              }
-            </tbody>
-          </table>
+        <!-- 2. Resultados Recientes -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Últimos 5 Resultados</h3>
+            <!-- Botón Limpiar solo para Admin -->
+            @if(isAdmin$ | async){
+            <button class="btn btn-clear" (click)="clearRecent()">
+              Limpiar
+            </button>
+            }
+          </div>
+          <div class="table-wrap">
+            <table class="table modern-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Juego</th>
+                  <th>Email</th>
+                  <th>Puntaje</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of resultadosRecientes$ | async; track r.id) {
+                <tr>
+                  <td>
+                    <!-- Corregimos formato de fecha -->
+                    @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() |
+                    date:'dd/MM/yyyy hh:mm a' }} } @else { - }
+                  </td>
+                  <td>{{ r.juego }}</td>
+                  <td class="break">{{ r.email || r.uid }}</td>
+                  <td>{{ r.puntos }}</td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="empty">
+                    Sin partidas recientes registradas
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <!-- 3. Top 3 Ahorcado -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Top 3 - Ahorcado</h3>
+            <!-- Botón Limpiar solo para Admin -->
+            @if(isAdmin$ | async){
+            <button class="btn btn-clear" (click)="clearGameTop3('ahorcado')">
+              Limpiar
+            </button>
+            }
+          </div>
+          <div class="table-wrap">
+            <table class="table modern-table game-top">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of topAhorcado$ | async; track r.id; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td class="break">{{ r.email || r.uid }}</td>
+                  <td>{{ r.puntos }}</td>
+                  <td>
+                    <!-- Corregimos formato de fecha -->
+                    @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() |
+                    date:'dd/MM/yyyy hh:mm a' }} } @else { - }
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="empty">
+                    Sin resultados para Ahorcado
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. Top 3 Mayor o Menor -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Top 3 - Mayor o Menor</h3>
+            <!-- Botón Limpiar solo para Admin -->
+            @if(isAdmin$ | async){
+            <button
+              class="btn btn-clear"
+              (click)="clearGameTop3('mayor-menor')"
+            >
+              Limpiar
+            </button>
+            }
+          </div>
+          <div class="table-wrap">
+            <table class="table modern-table game-top">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of topMayorMenor$ | async; track r.id; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td class="break">{{ r.email || r.uid }}</td>
+                  <td>{{ r.puntos }}</td>
+                  <td>
+                    <!-- Corregimos formato de fecha -->
+                    @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() |
+                    date:'dd/MM/yyyy hh:mm a' }} } @else { - }
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="empty">
+                    Sin resultados para Mayor o Menor
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 5. Top 3 Preguntados -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Top 3 - Preguntados</h3>
+            <!-- Botón Limpiar solo para Admin -->
+            @if(isAdmin$ | async){
+            <button
+              class="btn btn-clear"
+              (click)="clearGameTop3('preguntados')"
+            >
+              Limpiar
+            </button>
+            }
+          </div>
+          <div class="table-wrap">
+            <table class="table modern-table game-top">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of topPreguntados$ | async; track r.id; let i = $index)
+                {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td class="break">{{ r.email || r.uid }}</td>
+                  <td>{{ r.puntos }}</td>
+                  <td>
+                    <!-- Corregimos formato de fecha -->
+                    @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() |
+                    date:'dd/MM/yyyy hh:mm a' }} } @else { - }
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="empty">
+                    Sin resultados para Preguntados
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 6. Top 3 Secuencias -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Top 3 - Secuencias</h3>
+            <!-- Botón Limpiar solo para Admin -->
+            @if(isAdmin$ | async){
+            <button class="btn btn-clear" (click)="clearGameTop3('secuencias')">
+              Limpiar
+            </button>
+            }
+          </div>
+          <div class="table-wrap">
+            <table class="table modern-table game-top">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Puntos</th>
+                  <th>Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of topSecuencias$ | async; track r.id; let i = $index) {
+                <tr>
+                  <td>{{ i + 1 }}</td>
+                  <td class="break">{{ r.email || r.uid }}</td>
+                  <td>{{ r.puntos }}</td>
+                  <td>
+                    <!-- Corregimos formato de fecha -->
+                    @if (r.createdAt?.toDate) { {{ r.createdAt.toDate() |
+                    date:'dd/MM/yyyy hh:mm a' }} } @else { - }
+                  </td>
+                </tr>
+                } @empty {
+                <tr>
+                  <td colspan="4" class="empty">
+                    Sin resultados para Secuencias
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Botón Limpiar Todo (Solo Admin) -->
+        @if(isAdmin$ | async){
+        <div class="clear-all-action">
+          <button class="btn btn-clear-all" (click)="clearAll()">
+            Limpiar Todos los Datos
+          </button>
+          <!-- Quitamos la advertencia de backend, ya que ahora sí funciona -->
+          <!-- <p class="clear-warning">(Requiere permisos de administrador y backend)</p> -->
+        </div>
+        }
       </div>
+      <!-- Fin contenido principal -->
     </div>
+    <!-- Fin blue-skin -->
   </div>
+  <!-- Fin home-grid -->
 </section>

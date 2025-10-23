@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-// Eliminamos imports relacionados con NavigationEnd, filter, map, signal
+// Eliminamos imports relacionados con NavigationEnd, filter, map, signal, Router
 import { AuthService } from './core/auth.service';
 // Eliminamos filter, map from 'rxjs/operators';
 
