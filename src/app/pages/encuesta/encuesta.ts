@@ -16,6 +16,7 @@ import {
   serverTimestamp,
 } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
+import { RouterModule } from '@angular/router'; // <-- 1. IMPORTAR ROUTERMODULE
 
 function atLeastOneTrue(groupName: string): ValidatorFn {
   return (ctrl: AbstractControl): ValidationErrors | null => {
@@ -29,7 +30,7 @@ function atLeastOneTrue(groupName: string): ValidatorFn {
 @Component({
   selector: 'app-encuesta',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule], // <-- 2. AÑADIR ROUTERMODULE
   templateUrl: './encuesta.html',
   styleUrls: ['./encuesta.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,10 +44,27 @@ export class EncuestaComponent {
   ok = false;
   err: string | null = null;
 
+  // --- 3. CREAMOS UN ESTADO INICIAL PARA REUTILIZAR ---
+  private readonly initialFormState = {
+    nombre: '',
+    edad: null,
+    telefono: '',
+    satisfaccion: '',
+    jugados: {
+      ahorcado: false,
+      mayorMenor: false,
+      preguntados: false,
+      secuencias: false,
+    },
+    juegoFavorito: '',
+    sugerenciaJuego: '',
+    comentario: '',
+  };
+
   form = this.fb.group(
     {
       nombre: [
-        '',
+        this.initialFormState.nombre,
         [
           Validators.required,
           Validators.minLength(3),
@@ -54,21 +72,25 @@ export class EncuestaComponent {
         ],
       ],
       edad: [
-        null as number | null,
+        this.initialFormState.edad as number | null,
         [Validators.required, Validators.min(18), Validators.max(99)],
       ],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
-      satisfaccion: ['', [Validators.required]],
-      jugados: this.fb.group({
-        ahorcado: [false],
-        mayorMenor: [false],
-        preguntados: [false],
-        secuencias: [false],
-      }),
-      juegoFavorito: ['', [Validators.required, Validators.maxLength(255)]],
-      sugerenciaJuego: ['', [Validators.maxLength(255)]],
+      telefono: [
+        this.initialFormState.telefono,
+        [Validators.required, Validators.pattern(/^\d{1,10}$/)],
+      ],
+      satisfaccion: [this.initialFormState.satisfaccion, [Validators.required]],
+      jugados: this.fb.group(this.initialFormState.jugados),
+      juegoFavorito: [
+        this.initialFormState.juegoFavorito,
+        [Validators.required, Validators.maxLength(255)],
+      ],
+      sugerenciaJuego: [
+        this.initialFormState.sugerenciaJuego,
+        [Validators.maxLength(255)],
+      ],
       comentario: [
-        '',
+        this.initialFormState.comentario,
         [
           Validators.required,
           Validators.minLength(5),
@@ -79,13 +101,19 @@ export class EncuestaComponent {
     { validators: [atLeastOneTrue('jugados')] }
   );
 
-  /** Getter fuertemente tipado para poder usarlo en [formGroup] sin error de TS */
   get jugadosGroup(): FormGroup {
     return this.form.get('jugados') as FormGroup;
   }
 
   ctrl(name: string) {
     return this.form.get(name)!;
+  }
+
+  // --- 4. NUEVA FUNCIÓN PARA LIMPIAR LOS CAMPOS ---
+  limpiarCampos(): void {
+    this.form.reset(this.initialFormState);
+    this.ok = false;
+    this.err = null;
   }
 
   async submit() {
@@ -111,21 +139,8 @@ export class EncuestaComponent {
         ...this.form.value,
       });
       this.ok = true;
-      this.form.reset({
-        nombre: '',
-        edad: null,
-        telefono: '',
-        satisfaccion: '',
-        jugados: {
-          ahorcado: false,
-          mayorMenor: false,
-          preguntados: false,
-          secuencias: false,
-        },
-        juegoFavorito: '',
-        sugerenciaJuego: '',
-        comentario: '',
-      });
+      // Usamos la nueva función para limpiar
+      this.limpiarCampos();
     } catch (e: any) {
       this.err = e?.message ?? 'No se pudo guardar la encuesta';
       console.error(e);
